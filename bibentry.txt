@@ -1,0 +1,9 @@
+% bibentry template for lsst.bib in https://github.com/lsst/lsst-texmf/blob/master/texmf/bibtex/bib/lsst.bib
+
+@DocuShare{RTN-016,
+   author = { Eric Neilsen },
+    title = {Background and concepts for monitoring survey progress and scheduler performance},
+     year = 2021,
+    month = Mar,
+   handle = {RTN-016},
+      url = {https://rtn-016.lsst.io } }
