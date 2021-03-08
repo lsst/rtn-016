@@ -1,0 +1,288 @@
+
+\section{Introduction}
+\label{sec:org2df4cd2}
+\section{Tools, reports and their audiences}
+\label{sec:org1244727}
+\subsection{Introduction}
+\label{sec:org8f7c0e7}
+\subsubsection{Reports distinguished by frequency and intended audience}
+\label{sec:org4f2efbe}
+\subsubsection{Actors}
+\label{sec:org0ce905c}
+\begin{itemize}
+\item Funding agencies
+\item Rubin Observatory management
+\item Science collaboration scientists
+\item Observing scientists
+\item Scheduler developers
+\item The Community
+\end{itemize}
+\subsection{Published upcomming schedule}
+\label{sec:org233906e}
+\subsubsection{\href{https://ls.st/lse-61}{LST-61}/DMS-REQ-0353 Publishing predicted visit schedule}
+\label{sec:orgb5b64ac}
+\begin{quote}
+Specification: A service shall be provided to publish to the community the next visit location and the predicted visit schedule provided by the OCS. This service shall consist of both a web page for human inspection and a web API to allow automated tools to respond promptly.
+
+Discussion: The next visit and advanced schedule do not need to be published using the same service or protocol.
+\end{quote}
+\subsubsection{\href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0378 Advanced Publishing of Scheduler Sequence}
+\label{sec:orgdf79be4}
+\begin{quote}
+The scheduling of the observing sequence lasting at least \texttt{schedSeqDuration} shall be published in advance of each observing visit.
+\end{quote}
+\subsection{Night reports}
+\label{sec:orgf08954a}
+\subsubsection{\href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0131 Nightly Summary Products}
+\label{sec:orgf5a7795}
+\begin{quote}
+The Level 1 Data Products shall include a variety of reports, generated every night, that summarize the scientific quality of the Level 1 data (SDQA metrics), and the associated Observatory performance and performance of the Data Management subsystem.
+\end{quote}
+\subsubsection{\href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0406 Subsystem Nightly Reporting}
+\label{sec:org9f211ee}
+\begin{quote}
+The LSST principal subsystems shall produce a searchable -interactive nightly report(s), from information in the EFD, summarizing per subsystem performance and behavior over a user defined period of time (e.g. the previous 24 hours).
+\end{quote}
+\subsubsection{\href{https://ls.st/lse-61}{LSE-61}/DMS-REQ-0096 Generate Data Quality Report Within Specified Time}
+\label{sec:org7252852}
+\begin{quote}
+The DMS shall generate a nightly Data Quality Report within time dqReportComplTime in both human-readable and machine-readable forms.
+\end{quote}
+\subsubsection{\href{https://ls.st/lse-61}{LSE-61}/DMS-REQ-0097 Level 1 Data Quality Report Definition}
+\label{sec:orgf49cfc4}
+\begin{quote}
+The DMS shall produce a Level 1 Data Quality Report that contains indicators of data quality that result from running the DMS pipelines, including at least: Photometric zero point vs. time for each utilized filter; Sky brightness vs. time for each utilized filter; seeing vs. time for each utilized filter; PSF parameters vs. time for each utilized filter; detection efficiency for point sources vs. mag for each utilized filter.
+\end{quote}
+\subsubsection{\href{https://ls.st/lse-61}{LSE-61}/DMS-REQ-0099 Level 1 Performance Report Definition}
+\label{sec:org7263405}
+\begin{quote}
+The DMS shall produce a Level 1 Performance Report that provides indicators of how the DMS has performed in processing the night's observations, including at least: number of observations successfully processed through each pipeline; number of observations for each pipeline that had recoverable failures (with a record of the failure type and recovery mechanism); number of observations for each pipeline that had unrecoverable failures; number of observations archived at each DMS Facility; number of observations satisfying the science criteria for each active science program.
+\end{quote}
+\subsection{Monthly progress reports}
+\label{sec:org15e06d3}
+\subsubsection{\href{https://ls.st/lpm-73}{LPM-73}: LSST Operations Plan}
+\label{sec:org49f2727}
+section 8.3.3
+\begin{quote}
+\begin{itemize}
+\item Tracking survey progress relative to the science requirements.
+\item Optimizing the scheduled observations.
+\item Balancing the observing schedule between survey operations, diagnostic activities, and calibration.
+\end{itemize}
+\end{quote}
+
+\begin{quote}
+Use the Operations Simulator toolbox to measure progress against the
+survey plan. A written monthly progress report will be provided to
+Headquarters, and weekly updates will be tracked in Chile.
+Adjustments to the short term observing plan (choice of filters,
+relative priority of science programs, etc.)  will be made in Chile.
+If major changes to observing strategy appear to be required,
+Headquarters will ask the PST for recommendations.
+\end{quote}
+\subsection{Periodic performance reviews}
+\label{sec:org640357c}
+\subsubsection{\href{https://ls.st/lse-29}{LSE-29}/LSR-REQ-0065 Survey performance reviews}
+\label{sec:orga14519b}
+\begin{quote}
+The Observatory shall have the ability to provide periodic status
+reports on the progress of the survey to allow both operations staff
+and the community to assess the survey progress.
+\end{quote}
+\subsection{Common tools for collecting performance analysis}
+\label{sec:orgeb21da6}
+\subsubsection{\href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0067 Performance \& Trend Analysis Toolkit}
+\label{sec:org7029949}
+\begin{quote}
+The LSST system shall provide a common tool kit for conducting performance analysis, including trending, on the telemetry captured in the Engineering \& Facility Database.
+\end{quote}
+\subsubsection{\href{https://ls.st/lse-29}{LSE-29}/LSR-REQ-0071 Scientific Oversight During Data Collection}
+\label{sec:org82f28ad}
+\begin{quote}
+Requirement: The LSST Observatory shall be developed to allow an
+observing scientist to have oversight of the Data Collection
+process. This interaction shall be enabled either locally on the
+summit or at remote locations. The data provided shall include all
+observing condition data, telemetry data to assess telescope
+conditions, and science data quality metrics for evaluation of the
+data collection process.
+
+Discussion: The objective of this requirement is to enable the
+observing scientist to be involved directly in the observing
+process. Under normal circumstances the observing scientist will not
+intervene in the autonomous operations (LSR-REQ-0072), but should be
+allowed to override if anomalous behavior occurs.
+\end{quote}
+\subsection{Tools for survey performance evaluation}
+\label{sec:org53fc3e6}
+\subsubsection{\href{https://ls.st/lse-29}{LSE-29}/LSR-REQ-0066 Survey performance evaluation}
+\label{sec:org7a744ac}
+\begin{quote}
+The Project shall create the necessary survey performance evaluation
+tools to predict the final results of the ten year survey based on the
+actual survey completed to date, assess the impacts of survey strategy
+changes resulting from changes in scientific priorities, and support
+the planning of the survey on a variety of time scales, from nightly
+through the entire 10 year duration.
+\end{quote}
+\subsubsection{\href{https://ls.st/lse-29}{LSE-29}/LSR-REQ-0070 Science Priorities and Survey Monitoring}
+\label{sec:orge9968ea}
+\begin{quote}
+The LSST project shall monitor the scientific and technical progress
+of the survey, communicate with the scientific user community and
+establish survey priorities, and adjust the survey design as needed to
+accomplish its goals given these priorities and achieved performance.
+\end{quote}
+\subsubsection{\href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0067 Performance \& Trend Analysis Toolkit}
+\label{sec:orga7276ec}
+\begin{quote}
+The LSST system shall provide a common tool kit for conducting performance analysis, including trending, on the telemetry captured in the Engineering \& Facility Database.
+\end{quote}
+\subsection{Tools for interaction with the community}
+\label{sec:org5d87304}
+\subsubsection{\href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0033 Survey Planning and performance monitoring}
+\label{sec:org14fb89e}
+\begin{quote}
+The LSST shall provide the tools and administrative processes
+necessary to monitor the progress of the ongoing survey, provide
+reports on the progress of the survey, respond to feedback from the
+science community, and evaluate the impact of changing science
+priorities over the 10 year survey lifetime.
+
+Discussion:It is expected that the performance of this task will
+require the use of detailed survey simulations in order to evaluate
+scheduling alternatives and optimize the future performance of the
+survey.
+\end{quote}
+\subsection{Interfaces for education and public outreach}
+\label{sec:org20f84c4}
+\subsubsection{\href{https://ls.st/lse-29}{LSE-29}/LSR-REQ-0113 EPO Products, Tools, and Interfaces}
+\label{sec:orgddcc99f}
+\begin{quote}
+LSST EPO shall provide access to LSST data through tools, interfaces,
+and learning experiences that are designedto engage communities with
+different levels of knowledge, experience and skills.
+\end{quote}
+\subsubsection{\href{https://ls.st/lse-29}{LSE-29}/LSR-REQ-0116 EPO Fully Integrated}
+\label{sec:orgf4096dd}
+\subsection{Unspecified reports}
+\label{sec:orgc808489}
+\subsubsection{\href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0056 System Monitoring \& Diagnostics}
+\label{sec:org4c7da18}
+\subsubsection{\href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0063 System Monitoring \& Diagnostics Subsystem Metadata for Science Analysis}
+\label{sec:org388f81a}
+\subsubsection{\href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0068 Summit Environment Monitoring}
+\label{sec:org2cfd71f}
+\subsubsection{\href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0072 Weather and Meteorological Monitoring}
+\label{sec:orgdab84d4}
+\subsubsection{\href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0078 Maintenance Reporting}
+\label{sec:orgfd202b9}
+\subsubsection{\href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0079 Maintenance Tracking and Analysis}
+\label{sec:org9f2e42c}
+\subsubsection{\href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0314 Subsystem Performance Reporting}
+\label{sec:org40711d6}
+\begin{quote}
+The LSST Observatory over the course of the 10-year survey shall monitor its performance with respect to its established baseline and report variances exceeding established thresholds.
+\end{quote}
+
+\section{Reports elements}
+\label{sec:org2064e22}
+\subsection{Numbers of exposures vs. time}
+\label{sec:orgaf87b39}
+\subsection{teff vs time}
+\label{sec:orgf7328cc}
+\subsection{Area at depths vs. time}
+\label{sec:org86be2ae}
+\subsection{Area times time at cadence}
+\label{sec:orge1d9a9b}
+\subsection{Total cadence maps}
+\label{sec:orgc4a2248}
+Maps of area on which we have achieved a given cadence for a given time.
+\subsection{Active cadence maps}
+\label{sec:orgdacea43}
+\subsection{Current values of science metrics vs. time}
+\label{sec:org42b9162}
+\subsection{Extrapolated values of science metrics vs. time}
+\label{sec:orgb8b6c07}
+\subsection{Survey movies}
+\label{sec:orga0225c4}
+\subsubsection{Nightly}
+\label{sec:org429ad03}
+\subsubsection{Long-term}
+\label{sec:org54cbe3a}
+\subsection{Current area meeting cadence criteria}
+\label{sec:orgb46ba0f}
+\subsection{Numbers of objects detected by time, location, magnitude}
+\label{sec:org68a9983}
+\subsection{Scheduler feature maps}
+\label{sec:org6cf2f01}
+\subsection{Downtime (by whether expected and by cause)}
+\label{sec:org8fba262}
+\subsubsection{weather}
+\label{sec:orgcc1d347}
+\subsubsection{technical problems}
+\label{sec:org84910c5}
+\subsection{Time spent on different programs (FWD, DDF, ToO, etc.)}
+\label{sec:org1a662a9}
+\subsection{Overhead from instrument performance}
+\label{sec:org9dcc1b2}
+\subsubsection{slew time}
+\label{sec:org610f156}
+\subsubsection{filter change time}
+\label{sec:org3f15a04}
+\subsubsection{readout time}
+\label{sec:orgc8f69fd}
+\subsubsection{total efficiency (exposure time/night time)}
+\label{sec:org489b0e0}
+\subsection{Slew angle distributions}
+\label{sec:org750750b}
+\subsection{Airmass distribution vs. time}
+\label{sec:orgf5364a4}
+\subsection{Airmass distribution vs. location on sky}
+\label{sec:org61828c5}
+\subsection{Delivered seeing distribution}
+\label{sec:orgd969073}
+\subsection{Seeing achieved vs expected}
+\label{sec:org8c30700}
+\subsection{Sky brightness achieved vs expected}
+\label{sec:org1bc45fb}
+\subsection{Weather (clouds) achieved vs expected}
+\label{sec:orgf2f2124}
+\subsection{DDF cadence evaluation plots}
+\label{sec:org53f0866}
+\subsection{WFD cadence evaluation maps}
+\label{sec:org2c5efc8}
+\subsection{Accuracy of published next visit and advanced schedule information}
+\label{sec:orga4e2b9f}
+\subsection{Number of filter changes}
+\label{sec:org4507f90}
+\subsection{Fraction of time scheduled in blobs}
+\label{sec:orgd0aa533}
+\subsection{Current season length maps}
+\label{sec:org6a5eb51}
+\subsection{Maximum gap in season maps}
+\label{sec:orgec320cb}
+\subsection{Time since last observation maps}
+\label{sec:org83f80bb}
+\subsection{Retrospective simulation}
+\label{sec:orgf491c31}
+If we simulated the time we just did, do we get what we actually got?
+\section{Infrastructure}
+\label{sec:org6cbd899}
+\subsection{Suppliers of required data}
+\label{sec:orgda99e9c}
+\subsubsection{Engineering and Facilities Database (EFD)}
+\label{sec:orgbb37c6f}
+\begin{itemize}
+\item \href{https://ls.st/LTS-210}{LTS-210: Engineering and Facility Database Design Document}
+\end{itemize}
+\subsubsection{DM Butler}
+\label{sec:orgbe7ee1c}
+\subsection{Reporting infrastructure}
+\label{sec:org0c0d061}
+\subsubsection{SQuaRE}
+\label{sec:org6c937dc}
+\subsubsection{flux}
+\label{sec:orgaa20903}
+\subsection{Specified reports and monitoring tools}
+\label{sec:org5de654b}
