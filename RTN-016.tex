@@ -53,6 +53,14 @@ A description of existing and planned Rubin Observatory infrastructure outlines 
 % ADD CONTENT HERE
 % You can also use the \input command to include several content files.
 
+% Use the body_text.tex file produced by exporting body_text.org to latex (using emacs orgmode)
+% This can be done by opening body_text.org in emacs,
+% then C-c C-e to get the Export Dispatecher buffer
+% then C-b to configue it to export just the content,
+% and not create its own latex preamble (class declaration, etc.)
+% then l l (two lower-case L) to export the result to body_text.tex
+\input{body_text.tex}
+
 \appendix
 % Include all the relevant bib files.
 % https://lsst-texmf.lsst.io/lsstdoc.html#bibliographies
