@@ -23,6 +23,56 @@ then l l (two lower-case "L"s) to export the result to body_text.tex
  - Generation of survey progress and strategy diagnostics requires both data generated "close to the instrument" (telemetry from the telescope) and data only available from other sources such as the output of processing by Data Management and the results of strategy simulations.
  - Rubin Observatory infrastructure currently under development (including opsim, MAF, SQuaRE/SQuaSH, LOVE, the Engineering and Facilities Database (EFD), and the Data Management butler) provides or will provide an array data sources and visualzation tools. It is not always clear, however, which tools are a good match for which strategy and progress related metrics, and work is required take advantage of this existing infrastructure.
 * TODO Introduction
+*** TODO frequency of reporting
+*** TODO standardized reports, dashboards, and interactive tools
+*** TODO audience
+*** TODO processing requirements
+* Metrics, plots, and other diagnostics
+*** TODO baseline numbers of exposures vs. time 
+**** By band
+**** By RA bin
+*** TODO teff vs time
+**** By band
+**** By RA bin
+*** TODO Aarea at depths vs. time
+*** TODO Area times time at cadence
+*** TODO Total cadence maps
+ Maps of area on which we have achieved a given cadence for a given time.
+*** TODO Active cadence maps
+*** TODO Current values of science metrics vs. time
+*** TODO Extrapolated values of science metrics vs. time
+*** TODO Survey movies
+**** Nightly
+**** Long-term
+*** TODO Current area meeting cadence criteria
+*** TODO Numbers of objects detected by time, location, magnitude
+*** TODO Scheduler feature maps
+*** TODO Downtime (by whether expected and by cause)
+**** weather
+**** technical problems
+*** TODO Time spent on different programs (FWD, DDF, ToO, etc.)
+*** TODO Overhead from instrument performance
+**** slew time
+**** filter change time
+**** readout time
+**** total efficiency (exposure time/night time)
+*** TODO Slew angle distributions
+*** TODO Airmass distribution vs. time
+*** TODO Airmass distribution vs. location on sky
+*** TODO Delivered seeing distribution
+*** TODO Seeing achieved vs expected
+*** TODO Sky brightness achieved vs expected
+*** TODO Weather (clouds) achieved vs expected
+*** TODO DDF cadence evaluation plots
+*** TODO WFD cadence evaluation maps
+*** TODO Accuracy of published next visit and advanced schedule information
+*** TODO Number of filter changes
+*** TODO Fraction of time scheduled in blobs
+*** TODO Current season length maps
+*** TODO Maximum gap in season maps
+*** TODO Time since last observation maps
+*** TODO Retrospective simulation
+ If we simulated the time we just did, do we get what we actually got?
 * ACTIVE Tools, reports and their audiences
 ** Introduction
 The Rubin Observatory project and staff performing LSST will require survey progress and status diagnostics, including a variety of metrics and plots.
@@ -230,52 +280,6 @@ different levels of knowledge, experience and skills.
 Good candidates for presentation to the public are movies of numbers of exposures generated, and plots numbers of galaxies (or other objects) detected as a function of time.
 
 *** [[https://ls.st/lse-29][LSE-29]]/LSR-REQ-0116 EPO Fully Integrated                       :noexport:
-* Reports elements
-*** TODO baseline numbers of exposures vs. time 
-**** By band
-**** By RA bin
-*** TODO teff vs time
-**** By band
-**** By RA bin
-*** TODO Aarea at depths vs. time
-*** TODO Area times time at cadence
-*** TODO Total cadence maps
- Maps of area on which we have achieved a given cadence for a given time.
-*** TODO Active cadence maps
-*** TODO Current values of science metrics vs. time
-*** TODO Extrapolated values of science metrics vs. time
-*** TODO Survey movies
-**** Nightly
-**** Long-term
-*** TODO Current area meeting cadence criteria
-*** TODO Numbers of objects detected by time, location, magnitude
-*** TODO Scheduler feature maps
-*** TODO Downtime (by whether expected and by cause)
-**** weather
-**** technical problems
-*** TODO Time spent on different programs (FWD, DDF, ToO, etc.)
-*** TODO Overhead from instrument performance
-**** slew time
-**** filter change time
-**** readout time
-**** total efficiency (exposure time/night time)
-*** TODO Slew angle distributions
-*** TODO Airmass distribution vs. time
-*** TODO Airmass distribution vs. location on sky
-*** TODO Delivered seeing distribution
-*** TODO Seeing achieved vs expected
-*** TODO Sky brightness achieved vs expected
-*** TODO Weather (clouds) achieved vs expected
-*** TODO DDF cadence evaluation plots
-*** TODO WFD cadence evaluation maps
-*** TODO Accuracy of published next visit and advanced schedule information
-*** TODO Number of filter changes
-*** TODO Fraction of time scheduled in blobs
-*** TODO Current season length maps
-*** TODO Maximum gap in season maps
-*** TODO Time since last observation maps
-*** TODO Retrospective simulation
- If we simulated the time we just did, do we get what we actually got?
 * Infrastructure needs
 ** TODO Data collection
 *** Retrieving data from the EFD
