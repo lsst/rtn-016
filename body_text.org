@@ -23,58 +23,107 @@ then l l (two lower-case "L"s) to export the result to body_text.tex
  - Generation of survey progress and strategy diagnostics requires both data generated "close to the instrument" (telemetry from the telescope) and data only available from other sources such as the output of processing by Data Management and the results of strategy simulations.
  - Rubin Observatory infrastructure currently under development (including opsim, MAF, SQuaRE/SQuaSH, LOVE, the Engineering and Facilities Database (EFD), and the Data Management butler) provides or will provide an array data sources and visualzation tools. It is not always clear, however, which tools are a good match for which strategy and progress related metrics, and work is required take advantage of this existing infrastructure.
 * TODO Introduction
+
+Progress and strategy diagnostics (metrics, plots, and other figures) are usefully characterized by several features.
+
+ - Audience :: Different diagnostics and figures are useful to different audiences. Possible audiences include reviewers for and administrators of funding agencies, Rubin Observatory management, LSST science collaboration scientists, the Rubin Observatory observing scientists, the scheduler developers, astronomers working on other projects, other members of the astronomical community, and the general public. 
+ - Format :: The diagnostics may take any of serveral forms, including simple scalars, time series and other plots, maps, or other represntations of distributions. 
+ - Timing :: Diagnostics will need to be produced on range of timescale, ranging from hours to months. Some need to be produced shortly before or after each night of observing, or even periodically throughout the night. Others can be produced on a monthly schedule, or only in preparation for meetings and reviews.
+ - Required data :: Data required to produce different diagnostics may originate in a variety of sources, including observatory telemetry, fully analyzed data products from Data Management, or sources outside the project (e.g. weather services).
+ - Computing resources :: In some cases diagnostics can be produced with minimal calculation from available data sources. In other cases significant processing, up to and including suites of =opsim= simulations and corresponding calculation of metrics using =MAF=, will be required.
+
+Each of these characteristics place requirements on the tools used to generate and provide access to the diagnostics.
+
 * Metrics, plots, and other diagnostics
-** Characterists of plots and metrics
-*** TODO frequency of reporting
-*** TODO standardized reports, dashboards, and interactive tools
-*** TODO audience
-*** TODO processing requirements
-** Examples
-*** TODO baseline numbers of exposures vs. time 
-**** By band
-**** By RA bin
-*** TODO teff vs time
-**** By band
-**** By RA bin
-*** TODO Aarea at depths vs. time
-*** TODO Area times time at cadence
-*** TODO Total cadence maps
- Maps of area on which we have achieved a given cadence for a given time.
-*** TODO Active cadence maps
-*** TODO Current values of science metrics vs. time
-*** TODO Extrapolated values of science metrics vs. time
-*** TODO Survey movies
-**** Nightly
-**** Long-term
-*** TODO Current area meeting cadence criteria
-*** TODO Numbers of objects detected by time, location, magnitude
-*** TODO Scheduler feature maps
-*** TODO Downtime (by whether expected and by cause)
-**** weather
-**** technical problems
-*** TODO Time spent on different programs (FWD, DDF, ToO, etc.)
-*** TODO Overhead from instrument performance
-**** slew time
-**** filter change time
-**** readout time
-**** total efficiency (exposure time/night time)
-*** TODO Slew angle distributions
-*** TODO Airmass distribution vs. time
-*** TODO Airmass distribution vs. location on sky
-*** TODO Delivered seeing distribution
-*** TODO Seeing achieved vs expected
-*** TODO Sky brightness achieved vs expected
-*** TODO Weather (clouds) achieved vs expected
-*** TODO DDF cadence evaluation plots
-*** TODO WFD cadence evaluation maps
-*** TODO Accuracy of published next visit and advanced schedule information
-*** TODO Number of filter changes
-*** TODO Fraction of time scheduled in blobs
-*** TODO Current season length maps
-*** TODO Maximum gap in season maps
-*** TODO Time since last observation maps
-*** TODO Retrospective simulation
- If we simulated the time we just did, do we get what we actually got?
+** Pre-night observing schedule 
+
+Before each night of observing, the schedule for the night should be simulated using =opsim=. There are serveral audionces for such schedules:
+ - the scheduling team should check the simulations for anamalies;
+ - the observing scientists staffing the telescope should study it to get an understanding of the expected behavior for the night, so that they can intervene or contact experts if the scheduler behaves differently during the night; and
+ - astronomers from other projects may use it to coordinate their observations with those of LSST, as specified by [[https://ls.st/lse-61][LST-61]]/DMS-REQ-0353: "Publishing predicted visit schedule."
+
+Nights of observing do not always proceed according to plan: slight differences in the start time or overhead between exposures may cause the predicted and actual schedule to diverge, and closures due to poor weather or equipment failure may create greater disruption. A handful of simulations with random offsets in start times and overheads between exposures can indicate the range of possibilities. [fn:: If the scheduler is modified to respond to observing conditions, then a handful of weather conditions will need to be simulated as well.]
+
+Because this diagnostics requires =opsim= simulation (perhaps multiple), production of the schedule requires compute resources, compute job management and automation, and a mechanism for archiving and distributing the results.
+
+** Graphical representation of the pre-night observing schedule
+
+The raw list of visits themselves is not easily digestable, so the observing schedule described in section [[*Pre-night observing schedule]] will require one or more visual representations. A movie of the upcoming night is a likely candidate for such a representation.
+
+** Numbers of science visits as a function of time
+
+Among the simplest measures of progress is the total number of useful science visits accumulated, as a function of time. For reference, the achieved plot should be presented over a collection of such curves generated using a suite of weather conditions, showing how the achieved progress compares to that expected in planning the survey.
+
+The meaning of such a plot is intuitive, and requires little explanation, and so is suitable for inclusion in high level reports and presentations to the public. 
+
+Although intenesting for its simplicity, this simple plot can hide some important features, so several variations  on this plot are of interest:
+
+ - Separation by band :: Plotting numbers of visits in each band sepearately will be useful for indicating whether the desired distirbution is being acheived, or if some bands are ahead or behind.
+ - Separation by R.A. :: Plotting numbers of visits in different R.A. band separately will be usefule for indicating if some parts of the sky are getting ahead or falling behind the baseline. Due to the variation in visibility, complex footprint, and expected seasonal variation in weather conditions, it may be easier to compare actual with baseline progress with such a plot than with maps.
+
+** Distributions of numbers of visits across the survey area as a function of time
+One of the fundamental requirments for the LSST survey (specified in table 23 of [[http://ls.st/lpm-17][LPM-17]]) is the median number of visits across the deepest 18000 square degrees area covered by the survey. A time series plot of this median as another intuitive measure of the progress, and is directly related to survey requirments. It differs from the simple number of visits time series describen in section [[*Numbers of science visits as a function of time]] in that this metric responds differently to highly uneven distributions in coverage across the sky. 
+
+It will be more useful still to presenting this metric would be a part of a box plot, violin plot, or some other more sophisticated method of showing how a distribution varies as a function of time. Such plots would not only show the medians, but also indicate distorted or unexpected distributions.
+
+A useful variation on this plot would be to show the distribution of accumulated $t_{\mbox{eff}}$ instead of simple counts of exposures. Such a plot would be less directly related to the requirement as presented in LPM-17, but would correspond directly to coadd depth.
+
+Like the total numbers of science visits (section [[*Numbers of science visits as a function of time]]), such plots could be usefully split by filter or R.A. bin.
+
+** Predicted area as a function of time
+Another of the fundamental requirments for the LSST survey (specified in table 22 of  [[http://ls.st/lpm-17][LPM-17]]) is the area of sky covered to a nominal depth. This is not a useful metric to track directly, however, because most area is not expected to approach the final depth until near the end of the survey. 
+
+However, as each night of the survey is completed, there is less uncertainty in the ultimate state of the survey as a whole: the final predicted area can be refined after each night of observing by resimulating the survey with =opsim= starting with the next night. A time series plot showing the predicted final survey can therefore be used to track how will the survey is doing compared with what it needs to be doing to reach its requirements.
+
+** TODO Sum of median numbers of visits in each band for top 18000 sq deg.
+#+begin_comment
+Nv1 from page 33 of [[http://ls.st/lpm-17][LPM-17]].
+f0Nv MedianNvisits from section 3.1 (p. 14) of [[http://ls.st/pstn-051][PSTN-051]].
+#+end_comment
+** TODO Fewest median numbers of visits in each band for top 18000 sq deg.
+#+begin_comment
+f0Nv MinNvisits from section 3.1 (p. 14) of [[http://ls.st/pstn-051][PSTN-051]].
+#+end_comment
+** TODO Area with multiple observations separated by nearly uniformly sampled timescales from 30 sec to 40 min
+#+begin_comment
+RVA1 from page 35 of  [[http://ls.st/lpm-17][LPM-17]].
+#+end_comment
+** TODO Best FWHM maps
+** TODO Numbers of objects detected
+as a function of time, location, magnitude, type
+** TODO Current season length maps
+** TODO Maximum gap in season maps
+** TODO Median gap in season maps
+** TODO Time since last observation
+** TODO Active cadence maps
+** TODO DDF cadence plot
+** TODO Accuracy of predicted schedule
+** TODO Retrospective simulation
+If we simulated the time we just did, do we get what we actually got?
+** TODO Overall estimated depth
+** TODO Overall estimated overhead
+** TODO Slew times
+** TODO Delivered FWHM
+Was the delivered seeing what would be expected based on DIMM measurements, airmass, and filter?
+** TODO Sky brightness
+** TODO filter change time
+** TODO Seeing distribution
+Has the atmospheric seeing been better or worse than opsim's model?
+** TODO Weather
+Have there been more or less cloudy nights than opsim's model?
+** TODO Downtime
+** TODO Slew angles
+** TODO Numbers of filter changes
+** TODO Airmass distribution
+** TODO Fraction of time scheduled in blobs
+** TODO Median airmass maps
+** TODO Scheduler feature maps
+** TODO Survey movies
+*** Nightly
+*** Long-term
+** TODO Balance between programs
+** TODO DETF Figure of Merit
+
 * ACTIVE Tools, reports and their audiences
 ** Introduction
 The Rubin Observatory project and staff performing LSST will require survey progress and status diagnostics, including a variety of metrics and plots.
@@ -297,7 +346,9 @@ Good candidates for presentation to the public are movies of numbers of exposure
 ** TODO opsim
 ** TODO MAF
 ** TODO Engineering and Facilities Database (EFD)
-- [[https://ls.st/LTS-210][LTS-210: Engineering and Facility Database Design Document]]
+ - [[https://ls.st/LTS-210][LTS-210: Engineering and Facility Database Design Document]]
+ - [[https://sqr-034.lsst.io/][SQR-034: EFD Operations]]
+ - [[https://sqr-029.lsst.io/][SQR-029: DM-EFD prototype implementation]]
 ** TODO DM Butler
 ** TODO SQuaSH/SQuaRE
 *** Overview diagram
@@ -335,6 +386,7 @@ Good candidates for presentation to the public are movies of numbers of exposure
 **** not clear how to get data into the DM framework.
 *** What is the right database for these derived quantities.
 ** TODO LOVE
+*** https://confluence.lsstcorp.org/pages/viewpage.action?pageId=60950797
 *** https://lsst-ts.github.io/LOVE-integration-tools/html/index.html
 *** [[https://lsst-ts.github.io/LOVE-integration-tools/html/modules/overview.html#love-architecture][Architecture diagram]] (section 1.2)
 *** Communication consists of (from https://lsst-ts.github.io/LOVE-integration-tools/html/modules/overview.html)
