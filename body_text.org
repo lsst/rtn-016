@@ -35,28 +35,31 @@ Progress and strategy diagnostics (metrics, plots, and other figures) are useful
 Each of these characteristics place requirements on the tools used to generate and provide access to the diagnostics.
 
 * Metrics, plots, and other diagnostics
+** Survey state descriptions
+Figures and diagrams describing the current "state of the survey" will be of great interest to the community as a whole, and and providing an understanding of whether or not they correspond to the plan for the survey will be essential for explaining how well the survey is proceeding.
+Examples of such diagrams will include:
+
+ - depth maps :: Maps of the survey showing the numbers of total visit, numbers of visits in each filter, and coadd limiting magnitude in each filter are likely to be the most prominant figures that show the current state of the survey. Maps cut in an assortment of ways, for example including only visits with PSF widths narrower than some cutoff, will also be of significant interest.
+ - time use hourglass plots :: A single graphic that summarizes how time has been used by the survey so far will also be of wide interest. A plot that color-codes the use of time night on one axis and time of night on the other is an effective means of conveying this information. Likely categorize to by symbolized by colors include: down time due to equipment failure, down time due to regular maintenance or engineering, down time due to weather, observing time without useful exposures (e.g. due to overcast skies), time spent on observations outside the WFD footprint (possible separated by mini-survey), time spent on DDFs, and other time in the WFD.
+ - data quality hourglass plots :: A plot similar to the time use hourglass plot, but instead of color coding separate science programs, represent data quality ($5\sigma$ limiting magnitude relative to nominal depth).
+ - deep drilling field (DDF) cadence plots :: A plot showing the nights on which each DDF has been observed in the current season[fn:: Gaps between observations that include dates on which the sun had an R.A. that match that of the DDF mark the boundaries between seasons.], and marking the time since it was last observed in each filter. Such plots may also encode the depth of exposures in each band on each night.
+ 
 ** Time series progression of scalar survey metrics
 Many science metrics are expected to improve continuously over the course of the survey.
 For each metric, there are two and perhaps three quantities that can be usefully compared:
  - baseline :: the value of the metric for the given time, as measured from a reference simulation.
- - estimated :: the value of the metric for the given time, measured from the actually colleted visits and visit parameters in the same way they were measured against the baseline simulation.
+ - estimated :: the value of the metric for the given time, measured from the actually collected visits and visit parameters in the same way they were measured against the baseline simulation.
  - achieved :: the value of the metric as mearused from the final processed data products.
 
 Estimated and achieved may differ in cases where the metric ultimately depends on the final catalogues of objects, which can only be estimated using the simple list of visits and data quality parameters produced by =opsim=.
 One example of this would be the total number of stars and galaxies detected (PSTN-51 sections 3.3 and 3.6): errors and limited precision in the model for the distribution of stars and galaxies will result in a difference between the estimated and achieved values of the metric.
 
-*** TODO Total, mean, median, min, max, and quantiles of numbers of visits (specified in table 23 of [[http://ls.st/lpm-17][LPM-17]])
-*** TODO Numbers of science visits by band
-*** TODO Numbers of science visits by R.A.
-*** TODO Numbers of science visits by program (WFD, DDF, ToO, etc.)
-*** TODO Total, mean, median, min, max, and quantiles of depth or $t_{eff}$
-*** TODO Total accumulated t_eff by band
-*** TODO Total accumulated t_eff by R.A.
-*** TODO Area with multiple observations separated by nearly uniformly sampled timescales from 30 sec to 40 min
-#+begin_comment
-RVA1 from page 35 of  [[http://ls.st/lpm-17][LPM-17]].
-#+end_comment
-*** TODO List relevant metrics from PSTN-51
+ - Total, mean, median, min, max, and quantiles of numbers of visits :: Table 23 of [[http://ls.st/lpm-17][LPM-17]], "The LSST System Science Requirements Document," gives specifications for the "sum of the median number of visits in each band, Nv1, across the sky area". Additional statistics beyond the median are also indicative of the quality of the survey: highly skewed distributions, long tails to the distribution, or a significant difference between the mean and median could all indicate problems in scheduling. Good candidates for showing the time series of this distributions would be a time series boxplot or violin plot.
+ - Numbers of science visits by band :: In addition to the sum across all bands, the distributions of visits in each band individually, and relative to each other, are also good indicators of whether the scheduler is behaving as expected. Time series plots of the visits split by band should rougly a constant proportionality on a timescale of months, but differences within each lunation, due to filters being swapped out and redder filters being preferentially chosen when the moon is very bright. 
+ - Numbers of science visits by R.A. :: Because the visibility of areas of the sky varies with the time of year, the distribution of visits across the sky is not expected to be uniform. Ideal visibility varies with R.A., so if the survey is ultimately to be uniform, the calendar observing dates elapsed and remaining need to corresponding rougly to the distribution of completed and needed visits for uniformity across the footprint. Plots of the number of visits in a set of R.A. bins as a function of date should show clear jumps at times when those R.A.'s correspond to local Sidereal times (LSTs) during the night in those times of year.
+ - Numbers of science visits by program :: The fraction of time dedicatated to the Wide-Fast-Deep (WFD) survey and mini-surveys (including the Deep Drilling Fields (DDFs), Galactic Plane (GP), North Ecliptic Spur (NES), South Celestial Pole (SEP), and Target of Opportunity observations (ToOs)) will be specified as part the establishment of survey strategy, and whether the scheduler is adhering to these decisions should be monitored.
+ - Area with multiple observations separated by nearly uniformly sampled timescales :: Section 3.4.0.2 of [[http://ls.st/lpm-17][LPM-17]] specifies a minimum area with fast (from 30 sec to 40 min) revisits.
+ - Science collaboration metrics :: Section [[https://ls.st/pstn-051][PSTN-51]], "Survey Strategy and Cadence Choices for the Vera C. Rubin Observatory Legacy Survey of Space and Time (LSST)," specifies a set of metrics contributed by the LSST science collaborations: completenes for various types of solar system objects (NEO-faint, NEO-bright, TNOs), numbers of stars and galaxies detected (N stars, N gals), number of tidal disruption events (TDEs), Fast Micro Lens event, the dark energy 3x2 Figure of Merit (FoM), a supernova Ia lightcurve metric, and a Proper Motion metric. (The Weak Lensing (WL) systematics metric and large scale structure (LSS) metric are redundant with the mean number of visits and number of detected galaxes metrics, already listed.) Supplements and refinements to these metrics are expected.
 
 ** Predicted scalar metrics for the final survey as a function of time
 Many metrics for the ultimate state of the survey do not improve smoothly with time.
@@ -66,7 +69,7 @@ A flat horizontal line will indicate a survey progressing exactly as expected ba
 A rising line will indicate that the survey is making more progress than expected, while a falling one indicates that the survey is falling behind.
 
 The final area is not the only metric for which these simulations are good tools for indicating progress; all of the scalar science metrics provided by the science working groups can be plotted in the same way. Plotting a selection of such metrics can show whether the current conditions or startegy are favoring some science goals over others in unexpected ways.
-The list of metrics tracked this way should be the same as that in section [[*Scalar Metrics]].
+The list of metrics tracked this way should be the same as that in section [[*Time series progression of scalar survey metrics]].
 
 ** Nightly scheduler behaviour diagnostics
 A number of plots and metrics will be needed to provide useful diagnostic information that can either help explain or predict the scheduler's behaviour, or identify potential problems in it.
@@ -77,7 +80,7 @@ These metrics can be usefully tracked at two times:
 
 Examples of such diagnostics include:
 
- - Feature maps :: Modern version of =opsim= select visits (or sets of visits grouped into "blobs") based on "features" that are functions of location on the sky: the slew time to reach the location on the sky, the expected depth of exposures to be taken there, and the progress made so far on that portion of the sky. A weighted mean of these features determines the selection of the next visit or set of visits. Examination of maps of these visits and their weighted combination is therefore fundamental to understanding the scheduler's behaviour. The presentation of the feature maps is complicated by the variablity with time and dependence on current pointing. Two candidate formats may be useful:
+ - Feature maps :: Modern version of =opsim= select visits (or sets of visits grouped into "blobs") based on "features" that are functions of location on the sky: the slew time to reach the location on the sky, the expected depth of exposures to be taken there, and the progress made so far on that portion of the sky. A weighted mean of these features determines the selection of the next visit or set of visits. Examination of maps of these visits and the resultant final reward function is therefore fundamental to understanding the scheduler's behaviour. The presentation of the feature maps is complicated by the variablity with time and dependence on current pointing. Two candidate formats may be useful:
    + animation :: a movie of the map over the night will provide the most detail, but can be difficult to navigate.
    + maximum feature values :: maps of the maximum value each point on the sky takes over the course of the night will be a useful indicator of how likely the scheduler is to schedule visits in these areas at some point in the night.
  - Full table of scheduled visits :: To support coordination between Rubin Observatory and other projects, [[https://ls.st/lse-61][LST-61]]/DMS-REQ-0353 requires that "A service shall be provided to publish to the community the next visit location and the predicted visit schedule provided by the OCS. This service shall consist of both a web page for human inspection and a web API to allow automated tools to respond promptly." Such a table (in both forms) will be useful not only to external projects, but also to the observing scientists for understanding what to expect from the upcomming night, and for the scheduling team to catch potential issues with the scheduler.
@@ -86,23 +89,29 @@ Examples of such diagnostics include:
  - Gap distribution :: A histogram of the gaps in time between successive visits can indicate where inefficiencies in observing come from.
  - Table of long gaps :: Long gaps between exposures indicated either problems or inefficiencies. A short table of unusually long gaps between pairs of exposure with possible indicators of explanations (e.g. the slew angle between exposures, or whether there was a filter change) can call attention to this lost time for evaluation by a human.
  - H.A. distribution :: The distribution of hour angles for scheduled exposures indicates whether the scheduler is maximizing data quality.
- - DDF cadence plot :: A figure which shows the times series of sets of visits in each band on each DDF, with the current time since last occurrance of each DDF/band combination. Combining simple markers here with indicators of achieved limiting magnitude and best possible estimated limiting magintude for the next week would also be useful.
+ - DDF cadence plots :: The DDF cadence plots described in section [[*Survey state descriptions]] will also be important for understanding whether a DDF should be (or should have been) observed on a given night.
+ - Fraction of time in blobs :: The "blob" scheduler is intended to be the workhorse scheduler for the WFD, and if an unexpectedly large number of exposures are being scheduled by the geedy scheduler, it may indicate a problem.
+
 ** Validation of the site and telescope model
 =opsim= simulations rely on several models for the characteristics of the site and the performance of the instrument.
 Deviations from the models can have significant consequences for the accuracy of the simulations.
 Comparisons between the modeled and achieved characteristics of the site and instrument will be important not only for understanding deviations between simulated and achieved performance, but also for improving simulations and making corresponding refinements to survey strategy.
 
+For each modeled feature, there are at least two plots are of interest: one plots the measured values against the value calculated by the =opsim= model; and the other that tracks the distribution of residuals over time (for example a box or violin plot).
+In some cases, additional plots may also be important.
+
 Examples of modeled characteristics include:
- - slew time :: as a function of change in horizon coordinates
- - filter change time ::
- - shutter and readout time ::
- - total overhead between successive exposures :: 
- - sky brightness :: as a function of airmass, sun and moon location and phase, and other factors
- - atmospheric seeing :: as measured by the DIMM
- - final delivered PSF width :: combines atmospheric seeing, the turbulance outer scale, and instrumental contributions
- - extinction and lost time due to clouds ::
+ - slew time :: In addition to simple compaing the modeled to achieved slew time, residuals between the two can be shown as a function of horizon coordinates and rotator angle.
+ - filter change time :: Nominally 90 seconds plus up to 30 seconds to put the camera into the necessary position.
+ - shutter time :: Nominally 1 second of overhead per visit.
+ - readout time :: Nominally 2 seconds, in parallel with any slew time.
+ - total overhead between successive exposures :: In principle the total overhead can be calculated by combining each source of overhead, but measurements of the total time from one exposure to the next (the start of of one visit to the start time of the next) will be an important diagnositic for discovering if the different values combine as expected, and if there are additional sources of overhead that have not been accounted for.
+ - sky brightness :: The sky brightness as a function of airmass, sun and moon location and phase, filter, and other factors. Plots that show residuals with respect to horizon coordinates may also be useful for indicating limitations in the model due to light polution, which is not currently included in the model.
+ - atmospheric seeing :: =opsim='s simulation is based on achived data from the Gemini South DIMM. A comparison of the Gemini South and Rubin Observatory DIMM measurements will provide a diagnostic for resultanting limitations. 
+ - final delivered PSF width :: The final delivered PSF width is a function of the atmospheric seeing, filter, airmass, the turbulance outer scale, dome seeing, and other instrumental contributions. In some cases, the value used by the =opsim= model is highly uncertain (e.g. the turbulence outer scale). Other contributers (for example the effect of the strength and direction relative to the telescope pointing on the dome seeing) are not currently modeled at all.
+ - extinction and lost time due to clouds :: The modules used for strategy simulation by =opsim= are based on historical cloud data recorded by humans at the nearby Cerro Tololo Inter-American Observatory. The correspondence between these estimates and actual time lost is highly uncertain. 
  - time lost due to engineering activities and equipment failures ::
- - achieved $5-\sigma$ depth :: 
+ - achieved depth :: The expected $5 \sigma$ limiting magnitude for point source detections in each visit is one of the basic "features" used by the scheduler, and is affected by a variety of factors. Comparisons between estimated and achieved depth are therefore of fundamental importance. 
 
 While some of these characteristics are functions of others, independent measurement of each will be important for verifying that the relations are those that are expected, and that there are no significant unaccounted for contributions.
 
@@ -110,15 +119,13 @@ In many cases, these characteristics will be tracked as part of telescope operat
 However, tracking and maintaining survey strategy requires presentation in a way that supports easy comparison to and updating of the =opsim= models.
 Either the tracking and monitoring being done for other systems should include the necessary comparisons to the =opsim= models, or separate variations should be generated for the strategy team.
 
-** Survey state descriptions
-*** TODO Time use "hourglass" plots
-*** TODO Current depth map
-*** TODO Best FWHM map
-*** TODO Current season length maps
-*** TODO Maximum gap in season maps
-*** TODO Median gap in season maps
-*** TODO Time since last observation
-** TODO Fraction of time scheduled in blobs
+** Disruption consequence analysis
+The project will need to be able to quantify the consequences of departures from the final baseline strategy, both in advance and in retrospect. This can be achieved through additional sets of simulations.
+
+Possible causes of disruptions include "target of opportunity" observing and unexpected engineering downtime. 
+It both cases, the consequences will not always be immediately obvious.
+For example, a set of target of opportunity exposures will not necessarily result in complete loss of time for the WFD or other programs, because exposures scheduled for the ToO will often contribute to the FWD themselves. 
+To quantify 
 
 * ACTIVE Tools, reports and their audiences
 ** Introduction
