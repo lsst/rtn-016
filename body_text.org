@@ -127,7 +127,7 @@ It both cases, the consequences will not always be immediately obvious.
 For example, a set of target of opportunity exposures will not necessarily result in complete loss of time for the WFD or other programs, because exposures scheduled for the ToO will often contribute to the FWD themselves. 
 To quantify 
 
-* ACTIVE Tools, reports and their audiences
+* Tools, reports, and their users
 ** Introduction
 The Rubin Observatory project and staff performing LSST will require survey progress and status diagnostics, including a variety of metrics and plots.
 Some of these will be needed by the staff themselves, providing the data needed to prevent and diagnose problems, identify potential imporvements, and evaluate suggestions for changes.
@@ -145,15 +145,29 @@ These plots and metrics can be produced and presented in any of several ways:
  - Reports :: The project will need to produce reports covering survey status and progress, whether in the form of documents and presentations. Many of the plots and metrics displayed in an information dashboard will be important elements in these reports. 
 
 The intended audience and the frequency of reporting are both important feature to consider in determining how any given metric or plot is to be generated.
-Possible audiences include the funding agencies, Rubin Observatory management, LSST science collaboration scientists, the Rubin Observatory observing scientists, the scheduler developers, astronomers working on other projects, other members of the astronomical community, and the general public. 
-Plots and metrics may be generated on regular schedules (nightly, monthly, etc.), or as occasions demand.
+Possible audiences include the funding agencies, Rubin Observatory management, LSST science collaboration scientists, the Observatory Science team (including the Observatory Scientist), the Observing Specialists, the Observatory Support Scientists, the Scheduler Scientists, astronomers working on other projects, other members of the astronomical community, and the general public. 
+Plots and metrics may be generated on regular schedules (nightly, monthly, or quarterly), or as occasions demand.
 
-The LSST system and data management requirements ([[https://ls.st/lse-29][LSE-29]] and [[https://ls.st/lse-61][LSE-61]]) and observatory systems specifications ([[https://ls.st/lse-30][LSE-30]]) include requirements on several reports and reporting tools, and additional reports or tools may also be required.
+The LSST system and data management requirements ([[https://ls.st/lse-29][LSE-29]] and [[https://ls.st/lse-61][LSE-61]]) and observatory systems specifications ([[https://ls.st/lse-30][LSE-30]]) include requirements on several reports and reporting tools. The roles and activities in the [[https://docushare.lsst.org/docushare/dsweb/Get/Document-36797/Rubin%20Observatory%20Operations%20Plan%20April%202020.pdf][Rubin Observatory Operations Plan]] imply additional reports, and imply additional requirements on those already described.
 
 ** Night Plan
+
+Potential problems related to strategy or scheduling should be found and resolved before each night of observing, of possible, and the observing specialists on shift during the night need to be briefed and provided with a written plan describing any unusual activities or modes of operation, what they should expect of the scheduler, what behaviour they should consider anomalous, and how they should react to anomalous behaviour.
+The [[https://docushare.lsst.org/docushare/dsweb/Get/Document-36797/Rubin%20Observatory%20Operations%20Plan%20April%202020.pdf][Rubin Observatory Operations Plan]] gives responsibility for reviewing and supervising scheduler behaviour to the Observatory Scientist and the Observatory Support Scientists, but specific procedures for this review and the briefing of the observing specialists are not yet developed.
+Under any plan it would be worthwhile to automate the generation of the necessary scheduler simulations and diagnostics (listed in section [[*Nightly scheduler behaviour diagnostics]]) for review and inclusion in briefing for the observing specialists and a plan for the night.
+
+In operations rehearsals (summarized in [[https://dmtn-119.lsst.io][DMTN-119]] and [[https://dmtn-159.lsst.io/][DMTN-159]]), each night was planned in a daily meeting which included the current status and plans for the next night.
+Among the "lessons learned" described in DMTN-119 was the need for a good note-taking during the daily meeting, with status report elements filled in prior to the meeting itself. 
+The minutes of this meeting can then become a plan for the night.
+Infrastructure to automate the creation of these report elements could either present them using a dashboard-like interface and be incorporated into the minutes, or create a template night plan directly, then supplemented during the meeting.[fn:: This process is similar to that used for observing for the Dark Energy Survey (DES).]
+
+Automation in support of the night plan should include:
+ - Automatic creation of one or more scheduler simulations.[fn:: A side-effect of the creation of scheduler simulations completed in the afternoon is the creation of one or more candidate schedules. If these are produced in format that can be uploaded to the OCS, they can serve as a back-up to the scheduler in the unlikely event of a catastrophic failure of the scheduler during the night.]
+ - Automatic creation of the diagnostics listed in section [[*Nightly scheduler behaviour diagnostics]], based on the simulations.
+ - Presentation of the diagnostics a dashboard, automatically generated static report, or as part of a template observing plan for the night.
+
 ** Published upcomming schedule
 To support coordination between LSST observing and that of other projects, including schedling of simultaneous or nearly simultaneous exposures the same areas of sky, the requirments specify that Rubin Observatory publish the observing schedule in advance.
-
 
 One requirement that specifies the advanced schedule is [[https://ls.st/lse-61][LST-61]]/DMS-REQ-0353, "Publishing predicted visit schedule":
 #+begin_quote
@@ -166,30 +180,30 @@ another is [[https://ls.st/lse-30][LSE-30]]/OSS-REQ-0378, "Advanced Publishing o
 The scheduling of the observing sequence lasting at least =schedSeqDuration= shall be published in advance of each observing visit.
 #+end_quote
 
-Schedule predictions will be useful for other purposes as well, even if they are only approximate.
-Another user for which an advanced schedule will be important is the observing scientists on duty.
-If observing scientists can review simulated schedules for an upcomming night, it will help them both identify some undesireable behaviour before it occurrs, and also help the identify when something is going wrong during observing itself.
-Many factors influence the scheduling of exposures in detail, and it can be difficult for a human to distinguish desired from undesired behaviour.
-If the observing scientists can review a handful of different simulations of the upcomming night, they can consult with scheduling experts to understand any apparantely anomolous behaviour.
-Then, if the behaviour of the scheduler during the night is significanty different from any simulated scheduled nights produced the day before, the observatory scientists may know that the scheduling experts need to be consulted even if the scheduler behaviour is not obviously wrong.[fn:: Additionally, the simulations that support the schedule predictions can serve as an emergency back-up in case of a disasterous failure of the scheduler during the night: the observing scientist can take the simulated schedule that seems most suitable given current conditions, and run it as a script
+These requirments imply the infrastructure necessary for:
+ - Automatic creation of scheduler simulations. The initial simulation for the night may be the same one as that described in section [[*Night Plan]], but additional simulations throughout the night will also be required. 
+ - A service to publish the predicted schedule through a web API.
+ - A service te publish the predicted schedule on a web page suitable for human inspection. 
+
+The overlap between these requiremnts and those for the creation of a night plan suggests that the same tool be used for both uses. 
+Support for this use case imposes several additional requirements not present for the night plan:
+ - The published schedule and diagnostics must be available to the public, not just the project staff.
+ - Update schedules need to be published as necessary though the night, not just at the start of the each night.
+ - A web API suitable for support of automated tools must be supplied.
+
 ** Night reports
 Night reports (or nights summaries) are in important feature common to most astronomical facilities, and basic plots and metrics indicating survey progress are important elements for such reports in large surveys such as LSST.
-Several Rubin Observatory requirements require the generation of night reports:
- - LSE-30/OSS-REQ-0131 :: Nightly Summary Products
- - LSE-30/OSS-REQ-0406 :: Subsystem Nightly Reporting
- - LSE-61/DMS-REQ-0096 :: Generate Data Quality Report Within Specified Time
- - LSE-61/DMS-REQ-0097 :: Level 1 Data Quality Report Definition
- - LST-490 :: 
-These specifications require that the report summarize "per system performance and behavior," but do not specify what is to be reported in great detail. LSE-61/DMS-REQ-0097, "Level 1 Data Quality Report Definition" has the most specificity:
-#+begin_quote
-The DMS shall produce a Level 1 Data Quality Report that contains indicators of data quality that result from running the DMS pipelines, including at least: Photometric zero point vs. time for each utilized filter; Sky brightness vs. time for each utilized filter; seeing vs. time for each utilized filter; PSF parameters vs. time for each utilized filter; detection efficiency for point sources vs. mag for each utilized filter.
-#+end_quote
+Several Rubin Observatory requirements require specify different aspects of the content and creation of night reports, including LSE-30/OSS-REQ-0131, LSE-30/OSS-REQ-0406, LSE-61/DMS-REQ-0096, and LSE-61/DMS-REQ-0097. Section 1.4 of LST-490, the "Observatory Electronics Logging Working Group Report," acknowledges the need for infrastructure to support the creation of this report.
+The specifications require that the report summarize "per system performance and behavior," but do not specify what is to be reported in great detail.
+This report is a natural home for the nightly scheduler behaviour diagnostics (described in section [[*Nightly scheduler behaviour diagnostics]]), when applied to actual (as opposed to simulated) scheduled nights.
+Furthermore, some elements of the survey state description (section [[*Survey state descriptions]]) will be of broad enough interest that updates to them may be usefully included after each night.
 
-Several diagnostics will be of particulary important for monitoring the scheduler.
-Some of these concern the scheduler itself, including distributions of slew angles, airmasses of exposures, time spent changing filters, and features that drive selection based on maintaing cadences.
-In addition, performance indicators from several other subsystems are of great interest for scheduling purposes.
-For example, scheduling simulations depend critically on slew times, filter change times, and a sky brightness model.
-If the performance of the relavant systems (considering the "sky" a system) differs significantly from the scheduler's expectations, then the scheduler configuration will need to be updated, and perhaps reoptimized. 
+In addition to the diagnostics directly related to scheduling, several of the data quality indicators that will be reported in the night report (following LSE-61/DMS-REQ-0097) to monitor the health of other subsystems are close to those needed for validation of the scheduler's site and telescope model (section [[*Validation of the site and telecope model]]). If these elements are produced with the needs of the scheduler scientists in mind, these same plots may fill both needs.
+
+So, to support scheduler and survey progress monitoring, the night report should include:
+ - Comparisons of system characteristics (slew time, filter change time, depth, sky brightness, etc.) with models used by the scheduler simulator.
+ - Nightly scheduler behaviour diagnostics
+ - 
 
 *** Notes                                                          :noexport:
 **** [[https://ls.st/lse-30][LSE-30]]/OSS-REQ-0131 Nightly Summary Products
@@ -213,69 +227,16 @@ If the performance of the relavant systems (considering the "sky" a system) diff
  The DMS shall produce a Level 1 Performance Report that provides indicators of how the DMS has performed in processing the night's observations, including at least: number of observations successfully processed through each pipeline; number of observations for each pipeline that had recoverable failures (with a record of the failure type and recovery mechanism); number of observations for each pipeline that had unrecoverable failures; number of observations archived at each DMS Facility; number of observations satisfying the science criteria for each active science program.
  #+end_quote
 
-** Weekly and monthly progress reports
-Among other duties, the "LSST Operations Plan" (LPM-73) specifies (section 8.3.3) that staff in Chile has the following telescope scheduling related duties:
- - Tracking survey progress relative to the science requirements.
- - Optimizing the scheduled observations.
- - Balancing the observing schedule between survey operations, diagnostic activities, and
-calibration.
-Furthermore, that the staff in Chile
-#+begin_quote
-Use the Operations Simulator toolbox to measure progress against the survey plan. A written monthly progress report will be provided to Headquarters, and weekly updates will be tracked in Chile. Adjustments to the short term observing plan (choice of filters, relative priority of science programs, etc.) will be made in Chile. 
-#+end_quote
-*** Notes                                                          :noexport:
-**** [[https://ls.st/lpm-73][LPM-73]]: LSST Operations Plan 
- section 8.3.3
- #+begin_quote
-  - Tracking survey progress relative to the science requirements.
-  - Optimizing the scheduled observations.
-  - Balancing the observing schedule between survey operations, diagnostic activities, and calibration.
- #+end_quote
-
- #+begin_quote
- Use the Operations Simulator toolbox to measure progress against the
- survey plan. A written monthly progress report will be provided to
- Headquarters, and weekly updates will be tracked in Chile.
- Adjustments to the short term observing plan (choice of filters,
- relative priority of science programs, etc.)  will be made in Chile.
- If major changes to observing strategy appear to be required,
- Headquarters will ask the PST for recommendations.
- #+end_quote
-
-** Periodic performance reviews
-The observatory staff and scheduling team will need to report progress and strategic concerns to management, funding agencies, and the community as a whole.
-These review may take the form of presentations (for example at the yearly Project and Community Workshop (PCW)) or written reports.
-Current requirements as written acknoweldge the need for such reports, but do not significantly constrain their contents. 
-[[https://ls.st/lse-29][LSE-29]]/LSR-REQ-0065, "Survey performance reviews," states:
-#+BEGIN_QUOTE
-The Observatory shall have the ability to provide periodic status
-reports on the progress of the survey to allow both operations staff
-and the community to assess the survey progress.
-#+END_QUOTE
-[[https://ls.st/lse-30][LSE-30]]/OSS-REQ-0314, "Subsystem Performance Reporting", emphasizes the importance of comparison with baselines:
-#+begin_quote
-The LSST Observatory over the course of the 10-year survey shall monitor its performance with respect to its established baseline and report variances exceeding established thresholds.
-#+end_quote
-[[https://ls.st/lse-30][LSE-30]]/OSS-REQ-0033, "Survey Planning and performance monitoring", calls out the need for reporting to the community at large:
-#+begin_quote
-The LSST shall provide the tools and administrative processes
-necessary to monitor the progress of the ongoing survey, provide
-reports on the progress of the survey, respond to feedback from the
-science community, and evaluate the impact of changing science
-priorities over the 10 year survey lifetime.
-
-Discussion: It is expected that the performance of this task will
-require the use of detailed survey simulations in order to evaluate
-scheduling alternatives and optimize the future performance of the
-survey.
-#+end_quote
-
-The reasonable contents of the reports will depend both on the venue and the state of the survey itself, and the reports themselves will require significant explanatory text and analysis: these reports are not a reasonable candidate for full automation.
-However, many of the metrics and plots that will be contained in such reports are, and furthermore will usually be those already generated for Night reports (section [[*Night reports]]), weekly and monthly progress reports (section [[*Weekly and monthly progress reports]]), or generated by dashboards or using interactive debugging tools.
-
-** TODO Nightly interactive information
- - https://ls.st/lse-490 section 1.3
 ** ACTIVE Tools for performance evaluation and analysis
+The Observatory Scientist, Observatory Support Scientists, and the Survey Scheduling team will need to routinely monitor survey progress and assumptions at a more detailed level than supported by the night log alone.
+This monitoring will require routine monitoring of most or all diagnostics listed in section [[*Metrics, plots, and other diagnostics]]. 
+Such routine monitoring if the full set of these plots were generated automatically after every night of observing. 
+
+*** Notes                                                          :noexport:
+
+The [[https://docushare.lsst.org/docushare/dsweb/Get/Document-36797/Rubin%20Observatory%20Operations%20Plan%20April%202020.pdf][Rubin Observatory Operations Plan]] gives responsibility for 
+
+
 In addition to reports, tools for monitoring performance ("dashboards") and interactive analysis are needed.
 Some of the views of the data required will consist of simple values directly connected to data generated by the instrumentation of the observatory itself ("telemetry").
 Such requirments include [[https://ls.st/lse-30][LSE-30]]/OSS-REQ-0067, "Performance & Trend Analysis Toolkit":
@@ -328,6 +289,89 @@ Numerous additional requirements recognize needs for monitoring and reporting, a
 
 TODO discuss separation of telemetry and other metrics that need tools for exploration, and correspondance to LOVE and SQuaRE/SQuaSH, and implications for survey progress monitoring tool development.
 
+** Periodic progress reports and performance reviews
+The observatory staff and scheduling team will need to report progress and strategic concerns to management, funding agencies, and the community as a whole. Requirements for the existence of such reports are present in multiple plans and requirements documents. Some examples include [[https://ls.st/lse-29][LSE-29]]/LSR-REQ-0065, "Survey performance reviews," which states:
+#+BEGIN_QUOTE
+The Observatory shall have the ability to provide periodic status reports on the progress of the survey to allow both operations staff and the community to assess the survey progress.
+#+END_QUOTE
+and [[https://ls.st/lse-30][LSE-30]]/OSS-REQ-0033, "Survey Planning and performance monitoring", calls out the need for reporting to the community at large:
+#+begin_quote
+The LSST shall provide the tools and administrative processes necessary to monitor the progress of the ongoing survey, provide reports on the progress of the survey, respond to feedback from the science community, and evaluate the impact of changing science priorities over the 10 year survey lifetime.
+
+Discussion: It is expected that the performance of this task will require the use of detailed survey simulations in order to evaluate scheduling alternatives and optimize the future performance of the survey.
+#+end_quote
+
+The [[https://docushare.lsst.org/docushare/dsweb/Get/Document-36797/Rubin%20Observatory%20Operations%20Plan%20April%202020.pdf][Rubin Observatory Operations Plan]] gives responsibility for producing a quarterly report to the Observatory Support Scientist:
+#+begin_quote
+Responsible for producing a quarterly report on the scheduled/expected observations versus the performed observations. This analysis includes monitoring the assumptions used by the scheduler including slew times, shutter open/close times, readout times etc. 
+#+end_quote
+
+Multiple such reports will be made on different schedulers, customized for different audiences.
+All of these reports may draw from any of the report elements descibed in section [[*Metrics, plots, and other diagnostics]], but it is unlikely that any single report will require every element.
+While the generation of individual elements will benefit from automation, the compilation and construction of such reports will require human attention and customization to each audience.
+
+** ABANDONED Weekly and monthly progress reports                   :noexport:
+Among other duties, the "LSST Operations Plan" (LPM-73) specifies (section 8.3.3) that staff in Chile has the following telescope scheduling related duties:
+ - Tracking survey progress relative to the science requirements.
+ - Optimizing the scheduled observations.
+ - Balancing the observing schedule between survey operations, diagnostic activities, and
+calibration.
+Furthermore, that the staff in Chile
+#+begin_quote
+Use the Operations Simulator toolbox to measure progress against the survey plan. A written monthly progress report will be provided to Headquarters, and weekly updates will be tracked in Chile. Adjustments to the short term observing plan (choice of filters, relative priority of science programs, etc.) will be made in Chile. 
+#+end_quote
+*** Notes                                                          :noexport:
+**** [[https://ls.st/lpm-73][LPM-73]]: LSST Operations Plan 
+ section 8.3.3
+ #+begin_quote
+  - Tracking survey progress relative to the science requirements.
+  - Optimizing the scheduled observations.
+  - Balancing the observing schedule between survey operations, diagnostic activities, and calibration.
+ #+end_quote
+
+ #+begin_quote
+ Use the Operations Simulator toolbox to measure progress against the
+ survey plan. A written monthly progress report will be provided to
+ Headquarters, and weekly updates will be tracked in Chile.
+ Adjustments to the short term observing plan (choice of filters,
+ relative priority of science programs, etc.)  will be made in Chile.
+ If major changes to observing strategy appear to be required,
+ Headquarters will ask the PST for recommendations.
+ #+end_quote
+
+** ABANDONED Periodic performance reviews                          :noexport:
+The observatory staff and scheduling team will need to report progress and strategic concerns to management, funding agencies, and the community as a whole.
+These review may take the form of presentations (for example at the yearly Project and Community Workshop (PCW)) or written reports.
+Current requirements as written acknoweldge the need for such reports, but do not significantly constrain their contents. 
+[[https://ls.st/lse-29][LSE-29]]/LSR-REQ-0065, "Survey performance reviews," states:
+#+BEGIN_QUOTE
+The Observatory shall have the ability to provide periodic status
+reports on the progress of the survey to allow both operations staff
+and the community to assess the survey progress.
+#+END_QUOTE
+[[https://ls.st/lse-30][LSE-30]]/OSS-REQ-0314, "Subsystem Performance Reporting", emphasizes the importance of comparison with baselines:
+#+begin_quote
+The LSST Observatory over the course of the 10-year survey shall monitor its performance with respect to its established baseline and report variances exceeding established thresholds.
+#+end_quote
+[[https://ls.st/lse-30][LSE-30]]/OSS-REQ-0033, "Survey Planning and performance monitoring", calls out the need for reporting to the community at large:
+#+begin_quote
+The LSST shall provide the tools and administrative processes
+necessary to monitor the progress of the ongoing survey, provide
+reports on the progress of the survey, respond to feedback from the
+science community, and evaluate the impact of changing science
+priorities over the 10 year survey lifetime.
+
+Discussion: It is expected that the performance of this task will
+require the use of detailed survey simulations in order to evaluate
+scheduling alternatives and optimize the future performance of the
+survey.
+#+end_quote
+
+The reasonable contents of the reports will depend both on the venue and the state of the survey itself, and the reports themselves will require significant explanatory text and analysis: these reports are not a reasonable candidate for full automation.
+However, many of the metrics and plots that will be contained in such reports are, and furthermore will usually be those already generated for Night reports (section [[*Night reports]]), weekly and monthly progress reports (section [[*Weekly and monthly progress reports]]), or generated by dashboards or using interactive debugging tools.
+
+** TODO Nightly interactive information                            :noexport:
+ - https://ls.st/lse-490 section 1.3
 ** Interfaces for education and public outreach
 While many survey progress metrics and visualizations are only likely to be of interest to experts, several will be intuitive, and may be good candidates for engaging the general public, as per [[https://ls.st/lse-29][LSE-29]]/LSR-REQ-0113, "EPO Products, Tools, and Interfaces"
 #+begin_quote
