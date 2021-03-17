@@ -42,8 +42,9 @@ Examples of such diagrams will include:
  - depth maps :: Maps of the survey showing the numbers of total visit, numbers of visits in each filter, and coadd limiting magnitude in each filter are likely to be the most prominant figures that show the current state of the survey. Maps cut in an assortment of ways, for example including only visits with PSF widths narrower than some cutoff, will also be of significant interest.
  - time use hourglass plots :: A single graphic that summarizes how time has been used by the survey so far will also be of wide interest. A plot that color-codes the use of time night on one axis and time of night on the other is an effective means of conveying this information. Likely categorize to by symbolized by colors include: down time due to equipment failure, down time due to regular maintenance or engineering, down time due to weather, observing time without useful exposures (e.g. due to overcast skies), time spent on observations outside the WFD footprint (possible separated by mini-survey), time spent on DDFs, and other time in the WFD.
  - data quality hourglass plots :: A plot similar to the time use hourglass plot, but instead of color coding separate science programs, represent data quality ($5\sigma$ limiting magnitude relative to nominal depth).
- - deep drilling field (DDF) cadence plots :: A plot showing the nights on which each DDF has been observed in the current season[fn:: Gaps between observations that include dates on which the sun had an R.A. that match that of the DDF mark the boundaries between seasons.], and marking the time since it was last observed in each filter. Such plots may also encode the depth of exposures in each band on each night.
- 
+ - transient detection efficiency maps :: Maps of detection efficiency for different classes of variable objects (bright and faint near Earth objects (NEOs), TransNeptunian Objects (TNOs), Tidal Disruption Events (TDEs), fast microlensing events, type 1a supernovae, and others) over the footprint, for the entire survey so far and for the current season.[fn:: Gaps between seasons may be defined to be gaps between visits than include the date on which the sun has the same R.A. as the point on the sky].
+ - deep drilling field (DDF) cadence and transient efficiency plots :: A set of plots (one for each DDF) showing the nights on which each DDF has been observed in the current season, and marking the time since it was last observed in each filter. Such plots may also encode the depth of exposures in each band on each night. The detection efficiency and actual numbers of detections for different classes of transients may be plotted on the same time axis, showing how gaps of different sizes affect the science for different classes of objects.
+
 ** Time series progression of scalar survey metrics
 Many science metrics are expected to improve continuously over the course of the survey.
 For each metric, there are two and perhaps three quantities that can be usefully compared:
@@ -120,12 +121,21 @@ However, tracking and maintaining survey strategy requires presentation in a way
 Either the tracking and monitoring being done for other systems should include the necessary comparisons to the =opsim= models, or separate variations should be generated for the strategy team.
 
 ** Disruption consequence analysis
-The project will need to be able to quantify the consequences of departures from the final baseline strategy, both in advance and in retrospect. This can be achieved through additional sets of simulations.
-
+The project will need to be able to quantify the consequences of departures from the final baseline strategy, both in advance and in retrospect. 
 Possible causes of disruptions include "target of opportunity" observing and unexpected engineering downtime. 
 It both cases, the consequences will not always be immediately obvious.
 For example, a set of target of opportunity exposures will not necessarily result in complete loss of time for the WFD or other programs, because exposures scheduled for the ToO will often contribute to the FWD themselves. 
-To quantify 
+To quantify the effects of such disruptions, achieved metrics need to be compared to what they would have been without the disruptions.
+This comparison requires additional simulations.
+By comparing metrics derived from simulations in which the discruption never takes place with ones in which they did, both the immediate and long term effects of the disruption can be quantified.
+The details of what simulations are needed for the comparison depend on whether the disruption being analyzed is one that has already occurred, or one which is under consideration or expected.
+When evaluating possible future disruptions, the simulations for comparison are both simulations from the current time to the completion of the survey, differing only by whether or not the disruption occurs.
+When evaluating the effects of a past disruption, the reference simulation (the one without the disruption) must begin in the past, before the disruption, and be run with the same environmental parameters (e.g. clouds and seeing) as actually achieved.
+That way, the consequences of the disruption itself can be evaluated independentely of deviations between the simulated and actual survey.
+
+In both cases, short and long term differences are of interest.
+Two disruptions may have similar short-term effects on metrics, but some disruptions will be easier for the automatic scheduler to automatically recover from with future observations than others.
+The time and degree to which it will be possible to recover from the disruption will sometimes be important information.
 
 * Tools, reports, and their users
 ** Introduction
