@@ -1,136 +1,148 @@
 
 \section{Summary}
-\label{sec:org78f4389}
+\label{sec:orgfb98a46}
 \begin{itemize}
-\item Tracking survey progress, comparison of the actual progress both to a baseline and to what would have been expected under similar conditions (e.g. weather) is important for Rubin Observatory staff and management, the science collaborations, the astronomical community, funding agencies, and even the general public.
-\item Survey progress and strategy diagnostics will need to be presented in multiple contexts, to a variety of audiences.
+\item Tracking survey progress, comparison of survey progress to a baseline, and validation of scheduler assumptions are important for Rubin Observatory staff and management, the science collaborations, the astronomical community, funding agencies, and even the general public.
+\item Survey progress and strategy diagnostics will need to be presented in multiple contexts, to a variety of audiences. Generation and presentation of such diagnostics will require multiple tools and processes.
 \item Data useful for evaluating survey progress and optomizing strategy is best visualized in a variety of ways. Some useful metrics are best viewed as scalars, or a simple time series. In other cases, complex plots or diagrams are required, and even then such plots may only be effectively interpreted in combination with other plots, diagrams, or descriptive text.
-\item Some metrics and visualizations needed for evaluating survey progress and optomizing strategy is "close to the data," and require minimal processing before presentation to the user. In other cases, however, significant analysis is necessary (for example suites of scheduler simulations). This diversity complicates infrastructure requirements.
+\item Some metrics and visualizations needed for evaluating survey progress and optomizing strategy are "close to the data," and require minimal processing before presentation to the user. In other cases, significant analysis is necessary (for example suites of scheduler simulations). This diversity complicates infrastructure requirements.
 \item Generation of survey progress and strategy diagnostics requires both data generated "close to the instrument" (telemetry from the telescope) and data only available from other sources such as the output of processing by Data Management and the results of strategy simulations.
 \item Rubin Observatory infrastructure currently under development (including opsim, MAF, SQuaRE/SQuaSH, LOVE, the Engineering and Facilities Database (EFD), and the Data Management butler) provides or will provide an array data sources and visualzation tools. It is not always clear, however, which tools are a good match for which strategy and progress related metrics, and work is required take advantage of this existing infrastructure.
 \end{itemize}
-\section{{\bfseries\sffamily TODO} Introduction}
-\label{sec:org3c3f9f6}
+\section{{\bfseries\sffamily ACTIVE} Introduction}
+\label{sec:orge7491ee}
+
+Progress and strategy diagnostics (metrics, plots, and other figures) are usefully characterized by several features.
+
+\begin{description}
+\item[{Audience}] Different diagnostics and figures are useful to different audiences. Possible audiences include reviewers for and administrators of funding agencies, Rubin Observatory management, LSST science collaboration scientists, the Rubin Observatory observing scientists, the scheduler developers, astronomers working on other projects, other members of the astronomical community, and the general public.
+\item[{Format}] The diagnostics may take any of serveral forms, including simple scalars, time series and other plots, maps, or other represntations of distributions.
+\item[{Timing}] Diagnostics will need to be produced on range of timescale, ranging from hours to months. Some need to be produced shortly before or after each night of observing, or even periodically throughout the night. Others can be produced on a monthly schedule, or only in preparation for meetings and reviews.
+\item[{Required data}] Data required to produce different diagnostics may originate in a variety of sources, including observatory telemetry, fully analyzed data products from Data Management, or sources outside the project (e.g. weather services).
+\item[{Computing resources}] In some cases diagnostics can be produced with minimal calculation from available data sources. In other cases significant processing, up to and including suites of \texttt{opsim} simulations and corresponding calculation of metrics using \texttt{MAF}, will be required.
+\end{description}
+
+Each of these characteristics place requirements on the tools used to generate and provide access to the diagnostics.
+
 \section{Metrics, plots, and other diagnostics}
-\label{sec:org88abc15}
-\subsection{Characterists of plots and metrics}
-\label{sec:org2922d9c}
-\begin{itemize}
-\item {\bfseries\sffamily TODO} frequency of reporting
-\label{sec:orgdce4b3f}
-\item {\bfseries\sffamily TODO} standardized reports, dashboards, and interactive tools
-\label{sec:org97e5a69}
-\item {\bfseries\sffamily TODO} audience
-\label{sec:org38c8a7e}
-\item {\bfseries\sffamily TODO} processing requirements
-\label{sec:org609d94c}
-\end{itemize}
-\subsection{Examples}
-\label{sec:org4d414fe}
-\begin{itemize}
-\item {\bfseries\sffamily TODO} baseline numbers of exposures vs. time
-\label{sec:orgf108039}
-\begin{itemize}
-\item By band
-\label{sec:org561e2d6}
-\item By RA bin
-\label{sec:orge214195}
-\end{itemize}
-\item {\bfseries\sffamily TODO} teff vs time
-\label{sec:orga3a400a}
-\begin{itemize}
-\item By band
-\label{sec:orgc84b8fa}
-\item By RA bin
-\label{sec:org9b69f40}
-\end{itemize}
-\item {\bfseries\sffamily TODO} Aarea at depths vs. time
-\label{sec:orgbb93971}
-\item {\bfseries\sffamily TODO} Area times time at cadence
-\label{sec:orgf866aac}
-\item {\bfseries\sffamily TODO} Total cadence maps
-\label{sec:org5fd3913}
-Maps of area on which we have achieved a given cadence for a given time.
-\item {\bfseries\sffamily TODO} Active cadence maps
-\label{sec:orgc1dd5e1}
-\item {\bfseries\sffamily TODO} Current values of science metrics vs. time
-\label{sec:org85fb11d}
-\item {\bfseries\sffamily TODO} Extrapolated values of science metrics vs. time
-\label{sec:org9812729}
-\item {\bfseries\sffamily TODO} Survey movies
-\label{sec:org0aa4447}
-\begin{itemize}
-\item Nightly
-\label{sec:orgda2c7c7}
-\item Long-term
-\label{sec:org276b67a}
-\end{itemize}
-\item {\bfseries\sffamily TODO} Current area meeting cadence criteria
-\label{sec:orgdce2144}
-\item {\bfseries\sffamily TODO} Numbers of objects detected by time, location, magnitude
-\label{sec:orgd4ddd4a}
-\item {\bfseries\sffamily TODO} Scheduler feature maps
-\label{sec:org97952b3}
-\item {\bfseries\sffamily TODO} Downtime (by whether expected and by cause)
-\label{sec:org4c63345}
-\begin{itemize}
-\item weather
-\label{sec:orgad62c16}
-\item technical problems
-\label{sec:org99e8b33}
-\end{itemize}
-\item {\bfseries\sffamily TODO} Time spent on different programs (FWD, DDF, ToO, etc.)
-\label{sec:org7ef0aa3}
-\item {\bfseries\sffamily TODO} Overhead from instrument performance
-\label{sec:org645d166}
-\begin{itemize}
-\item slew time
-\label{sec:org8100cbb}
-\item filter change time
-\label{sec:orgf71d1f3}
-\item readout time
-\label{sec:orge6c3973}
-\item total efficiency (exposure time/night time)
-\label{sec:org2496f6b}
-\end{itemize}
-\item {\bfseries\sffamily TODO} Slew angle distributions
-\label{sec:org3af80c5}
-\item {\bfseries\sffamily TODO} Airmass distribution vs. time
-\label{sec:org2f193b7}
-\item {\bfseries\sffamily TODO} Airmass distribution vs. location on sky
-\label{sec:org5092027}
-\item {\bfseries\sffamily TODO} Delivered seeing distribution
-\label{sec:org701be6d}
-\item {\bfseries\sffamily TODO} Seeing achieved vs expected
-\label{sec:orge0b39ff}
-\item {\bfseries\sffamily TODO} Sky brightness achieved vs expected
-\label{sec:org3d22349}
-\item {\bfseries\sffamily TODO} Weather (clouds) achieved vs expected
-\label{sec:org889fc10}
-\item {\bfseries\sffamily TODO} DDF cadence evaluation plots
-\label{sec:org3b8234f}
-\item {\bfseries\sffamily TODO} WFD cadence evaluation maps
-\label{sec:orgfe1b073}
-\item {\bfseries\sffamily TODO} Accuracy of published next visit and advanced schedule information
-\label{sec:org1889a74}
-\item {\bfseries\sffamily TODO} Number of filter changes
-\label{sec:org0e7762a}
-\item {\bfseries\sffamily TODO} Fraction of time scheduled in blobs
-\label{sec:orgfe99ab2}
-\item {\bfseries\sffamily TODO} Current season length maps
-\label{sec:org355ec12}
-\item {\bfseries\sffamily TODO} Maximum gap in season maps
-\label{sec:orgfb0efe0}
-\item {\bfseries\sffamily TODO} Time since last observation maps
-\label{sec:org8af75fc}
-\item {\bfseries\sffamily TODO} Retrospective simulation
-\label{sec:orgbc002d0}
-If we simulated the time we just did, do we get what we actually got?
-\end{itemize}
-\section{{\bfseries\sffamily ACTIVE} Tools, reports and their audiences}
-\label{sec:org457f191}
+\label{sec:org6ffb211}
+\subsection{Survey state descriptions}
+\label{sec:org348cab1}
+Figures and diagrams describing the current "state of the survey" will be of great interest to the community as a whole, and and providing an understanding of whether or not they correspond to the plan for the survey will be essential for explaining how well the survey is proceeding.
+Examples of such diagrams will include:
+
+\begin{description}
+\item[{depth maps}] Maps of the survey showing the numbers of total visit, numbers of visits in each filter, and coadd limiting magnitude in each filter are likely to be the most prominant figures that show the current state of the survey. Maps cut in an assortment of ways, for example including only visits with PSF widths narrower than some cutoff, will also be of significant interest.
+\item[{time use hourglass plots}] A single graphic that summarizes how time has been used by the survey so far will also be of wide interest. A plot that color-codes the use of time night on one axis and time of night on the other is an effective means of conveying this information. Likely categorize to by symbolized by colors include: down time due to equipment failure, down time due to regular maintenance or engineering, down time due to weather, observing time without useful exposures (e.g. due to overcast skies), time spent on observations outside the WFD footprint (possible separated by mini-survey), time spent on DDFs, and other time in the WFD.
+\item[{data quality hourglass plots}] A plot similar to the time use hourglass plot, but instead of color coding separate science programs, represent data quality (\(5\sigma\) limiting magnitude relative to nominal depth).
+\item[{deep drilling field (DDF) cadence plots}] A plot showing the nights on which each DDF has been observed in the current season\footnote{Gaps between observations that include dates on which the sun had an R.A. that match that of the DDF mark the boundaries between seasons.}, and marking the time since it was last observed in each filter. Such plots may also encode the depth of exposures in each band on each night.
+\end{description}
+
+\subsection{Time series progression of scalar survey metrics}
+\label{sec:org69020ba}
+Many science metrics are expected to improve continuously over the course of the survey.
+For each metric, there are two and perhaps three quantities that can be usefully compared:
+\begin{description}
+\item[{baseline}] the value of the metric for the given time, as measured from a reference simulation.
+\item[{estimated}] the value of the metric for the given time, measured from the actually collected visits and visit parameters in the same way they were measured against the baseline simulation.
+\item[{achieved}] the value of the metric as mearused from the final processed data products.
+\end{description}
+
+Estimated and achieved may differ in cases where the metric ultimately depends on the final catalogues of objects, which can only be estimated using the simple list of visits and data quality parameters produced by \texttt{opsim}.
+One example of this would be the total number of stars and galaxies detected (PSTN-51 sections 3.3 and 3.6): errors and limited precision in the model for the distribution of stars and galaxies will result in a difference between the estimated and achieved values of the metric.
+
+\begin{description}
+\item[{Total, mean, median, min, max, and quantiles of numbers of visits}] Table 23 of \href{http://ls.st/lpm-17}{LPM-17}, "The LSST System Science Requirements Document," gives specifications for the "sum of the median number of visits in each band, Nv1, across the sky area". Additional statistics beyond the median are also indicative of the quality of the survey: highly skewed distributions, long tails to the distribution, or a significant difference between the mean and median could all indicate problems in scheduling. Good candidates for showing the time series of this distributions would be a time series boxplot or violin plot.
+\item[{Numbers of science visits by band}] In addition to the sum across all bands, the distributions of visits in each band individually, and relative to each other, are also good indicators of whether the scheduler is behaving as expected. Time series plots of the visits split by band should rougly a constant proportionality on a timescale of months, but differences within each lunation, due to filters being swapped out and redder filters being preferentially chosen when the moon is very bright.
+\item[{Numbers of science visits by R.A.}] Because the visibility of areas of the sky varies with the time of year, the distribution of visits across the sky is not expected to be uniform. Ideal visibility varies with R.A., so if the survey is ultimately to be uniform, the calendar observing dates elapsed and remaining need to corresponding rougly to the distribution of completed and needed visits for uniformity across the footprint. Plots of the number of visits in a set of R.A. bins as a function of date should show clear jumps at times when those R.A.'s correspond to local Sidereal times (LSTs) during the night in those times of year.
+\item[{Numbers of science visits by program}] The fraction of time dedicatated to the Wide-Fast-Deep (WFD) survey and mini-surveys (including the Deep Drilling Fields (DDFs), Galactic Plane (GP), North Ecliptic Spur (NES), South Celestial Pole (SEP), and Target of Opportunity observations (ToOs)) will be specified as part the establishment of survey strategy, and whether the scheduler is adhering to these decisions should be monitored.
+\item[{Area with multiple observations separated by nearly uniformly sampled timescales}] Section 3.4.0.2 of \href{http://ls.st/lpm-17}{LPM-17} specifies a minimum area with fast (from 30 sec to 40 min) revisits.
+\item[{Science collaboration metrics}] Section \href{https://ls.st/pstn-051}{PSTN-51}, "Survey Strategy and Cadence Choices for the Vera C. Rubin Observatory Legacy Survey of Space and Time (LSST)," specifies a set of metrics contributed by the LSST science collaborations: completenes for various types of solar system objects (NEO-faint, NEO-bright, TNOs), numbers of stars and galaxies detected (N stars, N gals), number of tidal disruption events (TDEs), Fast Micro Lens event, the dark energy 3x2 Figure of Merit (FoM), a supernova Ia lightcurve metric, and a Proper Motion metric. (The Weak Lensing (WL) systematics metric and large scale structure (LSS) metric are redundant with the mean number of visits and number of detected galaxes metrics, already listed.) Supplements and refinements to these metrics are expected.
+\end{description}
+
+\subsection{Predicted scalar metrics for the final survey as a function of time}
+\label{sec:org2f8c9d1}
+Many metrics for the ultimate state of the survey do not improve smoothly with time.
+For example, the accumulated visits will be spread roughly uniformly over the survey footprint at any given time, so the area of sky observed to the nominal depth (specified in table 22 of \href{http://ls.st/lpm-17}{LPM-17}) will remain near zero for most of the survey, and then rise rapidly at the end: simply tracking the area covered to the nominal depth as a function of time does not provide a useful indication of progress being made toward achieving this metric.
+Progress toward achieving this requirement can, however, be tracked using simulations: if the remainder of the survey is simulated after each night of observing and the final metrics measured using the final result, the time series can be plotted to indicate how much progress the survey is making in comparison with what is required.
+A flat horizontal line will indicate a survey progressing exactly as expected based on simulations.
+A rising line will indicate that the survey is making more progress than expected, while a falling one indicates that the survey is falling behind.
+
+The final area is not the only metric for which these simulations are good tools for indicating progress; all of the scalar science metrics provided by the science working groups can be plotted in the same way. Plotting a selection of such metrics can show whether the current conditions or startegy are favoring some science goals over others in unexpected ways.
+The list of metrics tracked this way should be the same as that in section \ref{sec:org69020ba}.
+
+\subsection{Nightly scheduler behaviour diagnostics}
+\label{sec:orgbac0214}
+A number of plots and metrics will be needed to provide useful diagnostic information that can either help explain or predict the scheduler's behaviour, or identify potential problems in it.
+
+These metrics can be usefully tracked at two times:
+\begin{description}
+\item[{start of night}] At least one \texttt{opsim} simulation should be run for the night before each night of observing. Nightly scheduler behaviour diagnostics should be calculated for these simulations, giving and indication of what is expected for the night, and providing advanced warning for any unexpected or anamolous behaviour. Nights of observing do not always proceed according to plan: slight differences in the start time or overhead between exposures may cause the predicted and actual schedule to diverge, and closures due to poor weather or equipment failure may create greater disruption. A handful of simulations with random offsets in start times and overheads between exposures can indicate the range of possibilities.\footnote{If the scheduler is modified to respond to observing conditions, then a handful of weather conditions will need to be simulated as well.}
+\item[{end of night}] Nightly scheduler diagnostics should be calculated for each night shortly after the completion of observing. These diagnostics will alert the project to any scheduler problems or misbehaviour during the night, and help explain the scheduler's behaviour when it was not intuitive.
+\end{description}
+
+Examples of such diagnostics include:
+
+\begin{description}
+\item[{Feature maps}] Modern version of \texttt{opsim} select visits (or sets of visits grouped into "blobs") based on "features" that are functions of location on the sky: the slew time to reach the location on the sky, the expected depth of exposures to be taken there, and the progress made so far on that portion of the sky. A weighted mean of these features determines the selection of the next visit or set of visits. Examination of maps of these visits and the resultant final reward function is therefore fundamental to understanding the scheduler's behaviour. The presentation of the feature maps is complicated by the variablity with time and dependence on current pointing. Two candidate formats may be useful:
+\begin{description}
+\item[{animation}] a movie of the map over the night will provide the most detail, but can be difficult to navigate.
+\item[{maximum feature values}] maps of the maximum value each point on the sky takes over the course of the night will be a useful indicator of how likely the scheduler is to schedule visits in these areas at some point in the night.
+\end{description}
+\item[{Full table of scheduled visits}] To support coordination between Rubin Observatory and other projects, \href{https://ls.st/lse-61}{LST-61}/DMS-REQ-0353 requires that "A service shall be provided to publish to the community the next visit location and the predicted visit schedule provided by the OCS. This service shall consist of both a web page for human inspection and a web API to allow automated tools to respond promptly." Such a table (in both forms) will be useful not only to external projects, but also to the observing scientists for understanding what to expect from the upcomming night, and for the scheduling team to catch potential issues with the scheduler.
+\item[{Pointing movie}] A movie of the pointings of the telescope over the course of the night will be one of the fastest ways to convey an understanding of what the scheduler will do (before the night) or did (after it). Superposition of the pointings over the feature map.
+\item[{Global observing efficiency}] The ratio of the total science exposure time to the available time (measured using morning and evening twilight as references) provides a good, gross indicator of whether the scheduler is scheduling visits efficiently (minimizing overhead time).
+\item[{Gap distribution}] A histogram of the gaps in time between successive visits can indicate where inefficiencies in observing come from.
+\item[{Table of long gaps}] Long gaps between exposures indicated either problems or inefficiencies. A short table of unusually long gaps between pairs of exposure with possible indicators of explanations (e.g. the slew angle between exposures, or whether there was a filter change) can call attention to this lost time for evaluation by a human.
+\item[{H.A. distribution}] The distribution of hour angles for scheduled exposures indicates whether the scheduler is maximizing data quality.
+\item[{DDF cadence plots}] The DDF cadence plots described in section \ref{sec:org348cab1} will also be important for understanding whether a DDF should be (or should have been) observed on a given night.
+\item[{Fraction of time in blobs}] The "blob" scheduler is intended to be the workhorse scheduler for the WFD, and if an unexpectedly large number of exposures are being scheduled by the geedy scheduler, it may indicate a problem.
+\end{description}
+
+\subsection{Validation of the site and telescope model}
+\label{sec:org38f1dc8}
+\texttt{opsim} simulations rely on several models for the characteristics of the site and the performance of the instrument.
+Deviations from the models can have significant consequences for the accuracy of the simulations.
+Comparisons between the modeled and achieved characteristics of the site and instrument will be important not only for understanding deviations between simulated and achieved performance, but also for improving simulations and making corresponding refinements to survey strategy.
+
+For each modeled feature, there are at least two plots are of interest: one plots the measured values against the value calculated by the \texttt{opsim} model; and the other that tracks the distribution of residuals over time (for example a box or violin plot).
+In some cases, additional plots may also be important.
+
+Examples of modeled characteristics include:
+\begin{description}
+\item[{slew time}] In addition to simple compaing the modeled to achieved slew time, residuals between the two can be shown as a function of horizon coordinates and rotator angle.
+\item[{filter change time}] Nominally 90 seconds plus up to 30 seconds to put the camera into the necessary position.
+\item[{shutter time}] Nominally 1 second of overhead per visit.
+\item[{readout time}] Nominally 2 seconds, in parallel with any slew time.
+\item[{total overhead between successive exposures}] In principle the total overhead can be calculated by combining each source of overhead, but measurements of the total time from one exposure to the next (the start of of one visit to the start time of the next) will be an important diagnositic for discovering if the different values combine as expected, and if there are additional sources of overhead that have not been accounted for.
+\item[{sky brightness}] The sky brightness as a function of airmass, sun and moon location and phase, filter, and other factors. Plots that show residuals with respect to horizon coordinates may also be useful for indicating limitations in the model due to light polution, which is not currently included in the model.
+\item[{atmospheric seeing}] \texttt{opsim}'s simulation is based on achived data from the Gemini South DIMM. A comparison of the Gemini South and Rubin Observatory DIMM measurements will provide a diagnostic for resultanting limitations.
+\item[{final delivered PSF width}] The final delivered PSF width is a function of the atmospheric seeing, filter, airmass, the turbulance outer scale, dome seeing, and other instrumental contributions. In some cases, the value used by the \texttt{opsim} model is highly uncertain (e.g. the turbulence outer scale). Other contributers (for example the effect of the strength and direction relative to the telescope pointing on the dome seeing) are not currently modeled at all.
+\item[{extinction and lost time due to clouds}] The modules used for strategy simulation by \texttt{opsim} are based on historical cloud data recorded by humans at the nearby Cerro Tololo Inter-American Observatory. The correspondence between these estimates and actual time lost is highly uncertain.
+\item[{time lost due to engineering activities and equipment failures}] 
+
+\item[{achieved depth}] The expected \(5 \sigma\) limiting magnitude for point source detections in each visit is one of the basic "features" used by the scheduler, and is affected by a variety of factors. Comparisons between estimated and achieved depth are therefore of fundamental importance.
+\end{description}
+
+While some of these characteristics are functions of others, independent measurement of each will be important for verifying that the relations are those that are expected, and that there are no significant unaccounted for contributions.
+
+In many cases, these characteristics will be tracked as part of telescope operations, independent of direct strategy considerations.
+However, tracking and maintaining survey strategy requires presentation in a way that supports easy comparison to and updating of the \texttt{opsim} models.
+Either the tracking and monitoring being done for other systems should include the necessary comparisons to the \texttt{opsim} models, or separate variations should be generated for the strategy team.
+
+\subsection{Disruption consequence analysis}
+\label{sec:org5fdac8d}
+The project will need to be able to quantify the consequences of departures from the final baseline strategy, both in advance and in retrospect. This can be achieved through additional sets of simulations.
+
+Possible causes of disruptions include "target of opportunity" observing and unexpected engineering downtime. 
+It both cases, the consequences will not always be immediately obvious.
+For example, a set of target of opportunity exposures will not necessarily result in complete loss of time for the WFD or other programs, because exposures scheduled for the ToO will often contribute to the FWD themselves. 
+To quantify 
+
+\section{Tools, reports, and their users}
+\label{sec:org6a9307c}
 \subsection{Introduction}
-\label{sec:orgd49b9f9}
+\label{sec:orge57157f}
 The Rubin Observatory project and staff performing LSST will require survey progress and status diagnostics, including a variety of metrics and plots.
 Some of these will be needed by the staff themselves, providing the data needed to prevent and diagnose problems, identify potential imporvements, and evaluate suggestions for changes.
 In addition, such plots and metrics will also be needed for reports to the astronomical community and funding agencies, and even may be useful in engaging the general public.
@@ -149,15 +161,33 @@ These plots and metrics can be produced and presented in any of several ways:
 \end{description}
 
 The intended audience and the frequency of reporting are both important feature to consider in determining how any given metric or plot is to be generated.
-Possible audiences include the funding agencies, Rubin Observatory management, LSST science collaboration scientists, the Rubin Observatory observing scientists, the scheduler developers, astronomers working on other projects, other members of the astronomical community, and the general public. 
-Plots and metrics may be generated on regular schedules (nightly, monthly, etc.), or as occasions demand.
+Possible audiences include the funding agencies, Rubin Observatory management, LSST science collaboration scientists, the Observatory Science team (including the Observatory Scientist), the Observing Specialists, the Observatory Support Scientists, the Scheduler Scientists, astronomers working on other projects, other members of the astronomical community, and the general public. 
+Plots and metrics may be generated on regular schedules (nightly, monthly, or quarterly), or as occasions demand.
 
-The LSST system and data management requirements (\href{https://ls.st/lse-29}{LSE-29} and \href{https://ls.st/lse-61}{LSE-61}) and observatory systems specifications (\href{https://ls.st/lse-30}{LSE-30}) include requirements on several reports and reporting tools, and additional reports or tools may also be required.
+The LSST system and data management requirements (\href{https://ls.st/lse-29}{LSE-29} and \href{https://ls.st/lse-61}{LSE-61}) and observatory systems specifications (\href{https://ls.st/lse-30}{LSE-30}) include requirements on several reports and reporting tools. The roles and activities in the \href{https://docushare.lsst.org/docushare/dsweb/Get/Document-36797/Rubin\%20Observatory\%20Operations\%20Plan\%20April\%202020.pdf}{Rubin Observatory Operations Plan} imply additional reports, and imply additional requirements on those already described.
+
+\subsection{Night Plan}
+\label{sec:org2f466bb}
+
+Potential problems related to strategy or scheduling should be found and resolved before each night of observing, of possible, and the observing specialists on shift during the night need to be briefed and provided with a written plan describing any unusual activities or modes of operation, what they should expect of the scheduler, what behaviour they should consider anomalous, and how they should react to anomalous behaviour.
+The \href{https://docushare.lsst.org/docushare/dsweb/Get/Document-36797/Rubin\%20Observatory\%20Operations\%20Plan\%20April\%202020.pdf}{Rubin Observatory Operations Plan} gives responsibility for reviewing and supervising scheduler behaviour to the Observatory Scientist and the Observatory Support Scientists, but specific procedures for this review and the briefing of the observing specialists are not yet developed.
+Under any plan it would be worthwhile to automate the generation of the necessary scheduler simulations and diagnostics (listed in section \ref{sec:orgbac0214}) for review and inclusion in briefing for the observing specialists and a plan for the night.
+
+In operations rehearsals (summarized in \href{https://dmtn-119.lsst.io}{DMTN-119} and \href{https://dmtn-159.lsst.io/}{DMTN-159}), each night was planned in a daily meeting which included the current status and plans for the next night.
+Among the "lessons learned" described in DMTN-119 was the need for a good note-taking during the daily meeting, with status report elements filled in prior to the meeting itself. 
+The minutes of this meeting can then become a plan for the night.
+Infrastructure to automate the creation of these report elements could either present them using a dashboard-like interface and be incorporated into the minutes, or create a template night plan directly, then supplemented during the meeting.\footnote{This process is similar to that used for observing for the Dark Energy Survey (DES).}
+
+Automation in support of the night plan should include:
+\begin{itemize}
+\item Automatic creation of one or more scheduler simulations.\footnote{A side-effect of the creation of scheduler simulations completed in the afternoon is the creation of one or more candidate schedules. If these are produced in format that can be uploaded to the OCS, they can serve as a back-up to the scheduler in the unlikely event of a catastrophic failure of the scheduler during the night.}
+\item Automatic creation of the diagnostics listed in section \ref{sec:orgbac0214}, based on the simulations.
+\item Presentation of the diagnostics a dashboard, automatically generated static report, or as part of a template observing plan for the night.
+\end{itemize}
 
 \subsection{Published upcomming schedule}
-\label{sec:orgeb8acb5}
+\label{sec:orgb2964f0}
 To support coordination between LSST observing and that of other projects, including schedling of simultaneous or nearly simultaneous exposures the same areas of sky, the requirments specify that Rubin Observatory publish the observing schedule in advance.
-
 
 One requirement that specifies the advanced schedule is \href{https://ls.st/lse-61}{LST-61}/DMS-REQ-0353, "Publishing predicted visit schedule":
 \begin{quote}
@@ -170,137 +200,68 @@ another is \href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0378, "Advanced Publishin
 The scheduling of the observing sequence lasting at least \texttt{schedSeqDuration} shall be published in advance of each observing visit.
 \end{quote}
 
-Schedule predictions will be useful for other purposes as well, even if they are only approximate.
-Another user for which an advanced schedule will be important is the observing scientists on duty.
-If observing scientists can review simulated schedules for an upcomming night, it will help them both identify some undesireable behaviour before it occurrs, and also help the identify when something is going wrong during observing itself.
-Many factors influence the scheduling of exposures in detail, and it can be difficult for a human to distinguish desired from undesired behaviour.
-If the observing scientists can review a handful of different simulations of the upcomming night, they can consult with scheduling experts to understand any apparantely anomolous behaviour.
-Then, if the behaviour of the scheduler during the night is significanty different from any simulated scheduled nights produced the day before, the observatory scientists may know that the scheduling experts need to be consulted even if the scheduler behaviour is not obviously wrong.\footnote{Additionally, the simulations that support the schedule predictions can serve as an emergency back-up in case of a disasterous failure of the scheduler during the night: the observing scientist can take the simulated schedule that seems most suitable given current conditions, and run it as a script.}
-\subsection{Night reports}
-\label{sec:orgbfa9b6f}
-Night reports (or nights summaries) are in important feature common to most astronomical facilities, and basic plots and metrics indicating survey progress are important elements for such reports in large surveys such as LSST.
-Several Rubin Observatory requirements require the generation of night reports:
-\begin{description}
-\item[{LSE-30/OSS-REQ-0131}] Nightly Summary Products
-\item[{LSE-30/OSS-REQ-0406}] Subsystem Nightly Reporting
-\item[{LSE-61/DMS-REQ-0096}] Generate Data Quality Report Within Specified Time
-\item[{LSE-61/DMS-REQ-0097}] Level 1 Data Quality Report Definition
-\end{description}
-These specifications require that the report summarize "per system performance and behavior," but do not specify what is to be reported in great detail. LSE-61/DMS-REQ-0097, "Level 1 Data Quality Report Definition" has the most specificity:
-\begin{quote}
-The DMS shall produce a Level 1 Data Quality Report that contains indicators of data quality that result from running the DMS pipelines, including at least: Photometric zero point vs. time for each utilized filter; Sky brightness vs. time for each utilized filter; seeing vs. time for each utilized filter; PSF parameters vs. time for each utilized filter; detection efficiency for point sources vs. mag for each utilized filter.
-\end{quote}
-
-Several diagnostics will be of particulary important for monitoring the scheduler.
-Some of these concern the scheduler itself, including distributions of slew angles, airmasses of exposures, time spent changing filters, and features that drive selection based on maintaing cadences.
-In addition, performance indicators from several other subsystems are of great interest for scheduling purposes.
-For example, scheduling simulations depend critically on slew times, filter change times, and a sky brightness model.
-If the performance of the relavant systems (considering the "sky" a system) differs significantly from the scheduler's expectations, then the scheduler configuration will need to be updated, and perhaps reoptimized. 
-
-\subsection{Weekly and monthly progress reports}
-\label{sec:org26deaca}
-Among other duties, the "LSST Operations Plan" (LPM-73) specifies (section 8.3.3) that staff in Chile has the following telescope scheduling related duties:
+These requirments imply the infrastructure necessary for:
 \begin{itemize}
-\item Tracking survey progress relative to the science requirements.
-\item Optimizing the scheduled observations.
-\item Balancing the observing schedule between survey operations, diagnostic activities, and
+\item Automatic creation of scheduler simulations. The initial simulation for the night may be the same one as that described in section \ref{sec:org2f466bb}, but additional simulations throughout the night will also be required.
+\item A service to publish the predicted schedule through a web API.
+\item A service te publish the predicted schedule on a web page suitable for human inspection.
 \end{itemize}
-calibration.
-Furthermore, that the staff in Chile
-\begin{quote}
-Use the Operations Simulator toolbox to measure progress against the survey plan. A written monthly progress report will be provided to Headquarters, and weekly updates will be tracked in Chile. Adjustments to the short term observing plan (choice of filters, relative priority of science programs, etc.) will be made in Chile. 
-\end{quote}
 
-\subsection{Periodic performance reviews}
-\label{sec:orge53ad2f}
-The observatory staff and scheduling team will need to report progress and strategic concerns to management, funding agencies, and the community as a whole.
-These review may take the form of presentations (for example at the yearly Project and Community Workshop (PCW)) or written reports.
-Current requirements as written acknoweldge the need for such reports, but do not significantly constrain their contents. 
-\href{https://ls.st/lse-29}{LSE-29}/LSR-REQ-0065, "Survey performance reviews," states:
-\begin{quote}
-The Observatory shall have the ability to provide periodic status
-reports on the progress of the survey to allow both operations staff
-and the community to assess the survey progress.
-\end{quote}
-\href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0314, "Subsystem Performance Reporting", emphasizes the importance of comparison with baselines:
-\begin{quote}
-The LSST Observatory over the course of the 10-year survey shall monitor its performance with respect to its established baseline and report variances exceeding established thresholds.
-\end{quote}
-\href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0033, "Survey Planning and performance monitoring", calls out the need for reporting to the community at large:
-\begin{quote}
-The LSST shall provide the tools and administrative processes
-necessary to monitor the progress of the ongoing survey, provide
-reports on the progress of the survey, respond to feedback from the
-science community, and evaluate the impact of changing science
-priorities over the 10 year survey lifetime.
+The overlap between these requiremnts and those for the creation of a night plan suggests that the same tool be used for both uses. 
+Support for this use case imposes several additional requirements not present for the night plan:
+\begin{itemize}
+\item The published schedule and diagnostics must be available to the public, not just the project staff.
+\item Update schedules need to be published as necessary though the night, not just at the start of the each night.
+\item A web API suitable for support of automated tools must be supplied.
+\end{itemize}
 
-Discussion: It is expected that the performance of this task will
-require the use of detailed survey simulations in order to evaluate
-scheduling alternatives and optimize the future performance of the
-survey.
-\end{quote}
+\subsection{Night reports}
+\label{sec:orgc6a3b21}
+Night reports (or nights summaries) are in important feature common to most astronomical facilities, and basic plots and metrics indicating survey progress are important elements for such reports in large surveys such as LSST.
+Several Rubin Observatory requirements require specify different aspects of the content and creation of night reports, including LSE-30/OSS-REQ-0131, LSE-30/OSS-REQ-0406, LSE-61/DMS-REQ-0096, and LSE-61/DMS-REQ-0097. Section 1.4 of LST-490, the "Observatory Electronics Logging Working Group Report," acknowledges the need for infrastructure to support the creation of this report.
+The specifications require that the report summarize "per system performance and behavior," but do not specify what is to be reported in great detail.
+This report is a natural home for the nightly scheduler behaviour diagnostics (described in section \ref{sec:orgbac0214}), when applied to actual (as opposed to simulated) scheduled nights.
+Furthermore, some elements of the survey state description (section \ref{sec:org348cab1}) will be of broad enough interest that updates to them may be usefully included after each night.
 
-The reasonable contents of the reports will depend both on the venue and the state of the survey itself, and the reports themselves will require significant explanatory text and analysis: these reports are not a reasonable candidate for full automation.
-However, many of the metrics and plots that will be contained in such reports are, and furthermore will usually be those already generated for Night reports (section \ref{sec:orgbfa9b6f}), weekly and monthly progress reports (section \ref{sec:org26deaca}), or generated by dashboards or using interactive debugging tools.
+In addition to the diagnostics directly related to scheduling, several of the data quality indicators that will be reported in the night report (following LSE-61/DMS-REQ-0097) to monitor the health of other subsystems are close to those needed for validation of the scheduler's site and telescope model (section \ref{sec:org38f1dc8}). If these elements are produced with the needs of the scheduler scientists in mind, these same plots may fill both needs.
+
+So, to support scheduler and survey progress monitoring, the night report should include:
+\begin{itemize}
+\item Comparisons of system characteristics (slew time, filter change time, depth, sky brightness, etc.) with models used by the scheduler simulator.
+\item Nightly scheduler behaviour diagnostics
+\item 
+\end{itemize}
 
 \subsection{{\bfseries\sffamily ACTIVE} Tools for performance evaluation and analysis}
-\label{sec:org342b4dc}
-In addition to reports, tools for monitoring performance ("dashboards") and interactive analysis are needed.
-Some of the views of the data required will consist of simple values directly connected to data generated by the instrumentation of the observatory itself ("telemetry").
-Such requirments include \href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0067, "Performance \& Trend Analysis Toolkit":
-\begin{quote}
-The LSST system shall provide a common tool kit for conducting performance analysis, including trending, on the telemetry captured in the Engineering \& Facility Database.
-\end{quote}
-and  \href{https://ls.st/lse-29}{LSE-29}/LSR-REQ-0071 "Scientific Oversight During Data Collection":
-\begin{quote}
-Requirement: The LSST Observatory shall be developed to allow an
-observing scientist to have oversight of the Data Collection
-process. This interaction shall be enabled either locally on the
-summit or at remote locations. The data provided shall include all
-observing condition data, telemetry data to assess telescope
-conditions, and science data quality metrics for evaluation of the
-data collection process.
+\label{sec:orgd3002ed}
+The Observatory Scientist, Observatory Support Scientists, and the Survey Scheduling team will need to routinely monitor survey progress and assumptions at a more detailed level than supported by the night log alone.
+This monitoring will require routine monitoring of most or all diagnostics listed in section \ref{sec:org6ffb211}. 
+Such routine monitoring if the full set of these plots were generated automatically after every night of observing. 
 
-Discussion: The objective of this requirement is to enable the
-observing scientist to be involved directly in the observing
-process. Under normal circumstances the observing scientist will not
-intervene in the autonomous operations (LSR-REQ-0072), but should be
-allowed to override if anomalous behavior occurs.
+\subsection{Periodic progress reports and performance reviews}
+\label{sec:orgdb4477f}
+The observatory staff and scheduling team will need to report progress and strategic concerns to management, funding agencies, and the community as a whole. Requirements for the existence of such reports are present in multiple plans and requirements documents. Some examples include \href{https://ls.st/lse-29}{LSE-29}/LSR-REQ-0065, "Survey performance reviews," which states:
+\begin{quote}
+The Observatory shall have the ability to provide periodic status reports on the progress of the survey to allow both operations staff and the community to assess the survey progress.
+\end{quote}
+and \href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0033, "Survey Planning and performance monitoring", calls out the need for reporting to the community at large:
+\begin{quote}
+The LSST shall provide the tools and administrative processes necessary to monitor the progress of the ongoing survey, provide reports on the progress of the survey, respond to feedback from the science community, and evaluate the impact of changing science priorities over the 10 year survey lifetime.
+
+Discussion: It is expected that the performance of this task will require the use of detailed survey simulations in order to evaluate scheduling alternatives and optimize the future performance of the survey.
 \end{quote}
 
-In other cases, the it is clear that tools that are limited to simple examinition of telemetry will not be sufficient.
-For example, \href{https://ls.st/lse-29}{LSE-29}/LSR-REQ-0066, "Survey performance evaluation":
+The \href{https://docushare.lsst.org/docushare/dsweb/Get/Document-36797/Rubin\%20Observatory\%20Operations\%20Plan\%20April\%202020.pdf}{Rubin Observatory Operations Plan} gives responsibility for producing a quarterly report to the Observatory Support Scientist:
 \begin{quote}
-The Project shall create the necessary survey performance evaluation
-tools to predict the final results of the ten year survey based on the
-actual survey completed to date, assess the impacts of survey strategy
-changes resulting from changes in scientific priorities, and support
-the planning of the survey on a variety of time scales, from nightly
-through the entire 10 year duration.
+Responsible for producing a quarterly report on the scheduled/expected observations versus the performed observations. This analysis includes monitoring the assumptions used by the scheduler including slew times, shutter open/close times, readout times etc. 
 \end{quote}
-and \href{https://ls.st/lse-29}{LSE-29}/LSR-REQ-0070, "Science Priorities and Survey Monitoring":
-\begin{quote}
-The LSST project shall monitor the scientific and technical progress
-of the survey, communicate with the scientific user community and
-establish survey priorities, and adjust the survey design as needed to
-accomplish its goals given these priorities and achieved performance.
-\end{quote}
-recognize the need for tools that support generation and analysis of higher level diagnostics.
 
-Numerous additional requirements recognize needs for monitoring and reporting, and most of them are of significant relevance to survey progress and strategy. These include:
-\begin{itemize}
-\item \href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0056 System Monitoring \& Diagnostics
-\item \href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0063 System Monitoring \& Diagnostics Subsystem Metadata for Science Analysis
-\item \href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0068 Summit Environment Monitoring
-\item \href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0072 Weather and Meteorological Monitoring
-\item \href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0078 Maintenance Reporting
-\item \href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0079 Maintenance Tracking and Analysis
-\end{itemize}
-
-TODO discuss separation of telemetry and other metrics that need tools for exploration, and correspondance to LOVE and SQuaRE/SQuaSH, and implications for survey progress monitoring tool development.
+Multiple such reports will be made on different schedulers, customized for different audiences.
+All of these reports may draw from any of the report elements descibed in section \ref{sec:org6ffb211}, but it is unlikely that any single report will require every element.
+While the generation of individual elements will benefit from automation, the compilation and construction of such reports will require human attention and customization to each audience.
 
 \subsection{Interfaces for education and public outreach}
-\label{sec:org31d540f}
+\label{sec:org344a909}
 While many survey progress metrics and visualizations are only likely to be of interest to experts, several will be intuitive, and may be good candidates for engaging the general public, as per \href{https://ls.st/lse-29}{LSE-29}/LSR-REQ-0113, "EPO Products, Tools, and Interfaces"
 \begin{quote}
 LSST EPO shall provide access to LSST data through tools, interfaces,
@@ -309,207 +270,219 @@ different levels of knowledge, experience and skills.
 \end{quote}
 Good candidates for presentation to the public are movies of numbers of exposures generated, and plots numbers of galaxies (or other objects) detected as a function of time.
 \section{Infrastructure needs}
-\label{sec:org58c8aad}
+\label{sec:org677a514}
 \subsection{{\bfseries\sffamily TODO} Data collection}
-\label{sec:org8ea8da9}
+\label{sec:orgf5b9b5d}
 \begin{itemize}
 \item Retrieving data from the EFD
-\label{sec:orgcc3252e}
+\label{sec:org361c523}
 \item Retrieving data from the DM butler
-\label{sec:orgc11b8fa}
+\label{sec:org11abed0}
 \end{itemize}
 \subsection{{\bfseries\sffamily TODO} Data processing}
-\label{sec:org8c42423}
+\label{sec:org2124bce}
 \begin{itemize}
 \item Running opsim simulations
-\label{sec:orgcb6b225}
+\label{sec:org55b339f}
 \item Running MAF metrics
-\label{sec:org735cd9c}
+\label{sec:orgeafda54}
 \end{itemize}
 \subsection{{\bfseries\sffamily TODO} Data storage?}
-\label{sec:org7c66612}
+\label{sec:org78b7542}
 \subsection{{\bfseries\sffamily TODO} Exploration tools}
-\label{sec:org6c3846a}
+\label{sec:org839c0ca}
 \subsection{{\bfseries\sffamily TODO} Dashboards}
-\label{sec:orgf4812b8}
+\label{sec:orgb7570fa}
 \subsection{{\bfseries\sffamily TODO} Report generation}
-\label{sec:org1dfc66a}
+\label{sec:org4ac75ee}
 \section{Available infrastructure}
-\label{sec:org3f5e9ed}
+\label{sec:orga1d4cb9}
 \subsection{{\bfseries\sffamily TODO} opsim}
-\label{sec:org533373c}
+\label{sec:orga65401b}
 \subsection{{\bfseries\sffamily TODO} MAF}
-\label{sec:org2f970a5}
+\label{sec:orgfaed97d}
 \subsection{{\bfseries\sffamily TODO} Engineering and Facilities Database (EFD)}
-\label{sec:org2813477}
+\label{sec:org366bc60}
 \begin{itemize}
 \item \href{https://ls.st/LTS-210}{LTS-210: Engineering and Facility Database Design Document}
+\item \href{https://sqr-034.lsst.io/}{SQR-034: EFD Operations}
+\item \href{https://sqr-029.lsst.io/}{SQR-029: DM-EFD prototype implementation}
 \end{itemize}
 \subsection{{\bfseries\sffamily TODO} DM Butler}
-\label{sec:org15879f1}
+\label{sec:orge13c5fc}
 \subsection{{\bfseries\sffamily TODO} SQuaSH/SQuaRE}
-\label{sec:org3291df1}
+\label{sec:org84d4848}
 \begin{itemize}
 \item Overview diagram
-\label{sec:orgdce0e8e}
+\label{sec:org053740e}
 \item \href{https://sqr-009.lsst.io/}{SQR-009: The SQuaSH metrics dashboard}
-\label{sec:orge3b8beb}
+\label{sec:org55a9798}
 \item \href{https://sqr-017.lsst.io}{SQR-017: Validation Metrics Framework}
-\label{sec:org81fd34f}
+\label{sec:org2a66f19}
 \item \href{https://sqr-019.lsst.io/}{SQR-019: LSST Verification Framework API Demonstration}
-\label{sec:orgec5b8b2}
+\label{sec:org4f31973}
 \item \href{https://sqr-023.lsst.io/}{SQR-023: Design of the notebook-based report system}
-\label{sec:orgf178433}
+\label{sec:orgf1ae301}
 \item \href{https://sqr-026.lsst.io/}{SQR-026: Periodic report generation and publication via notebook templates}
-\label{sec:orga0fe021}
+\label{sec:orgf4b8796}
 \begin{itemize}
 \item night summaries
-\label{sec:org8183e6a}
+\label{sec:orgb80fa4e}
 \item \href{https://nbreport.lsst.io/}{nbreport} for automated reports
-\label{sec:org5287f73}
+\label{sec:org7013e4d}
 \end{itemize}
 \item \href{https://sqr-033.lsst.io/}{SQR-033: QA Strategy Working Group recommendations for SQuaSH}
-\label{sec:org55711bd}
+\label{sec:org56e5015}
 \item \href{https://sqr-034.lsst.io/}{SQR-034: EFD Operations}
-\label{sec:org61d9453}
+\label{sec:org9c20056}
 \item nublado for interactive analysis
-\label{sec:orgca576e7}
+\label{sec:org25a46ca}
 \item \href{https://github.com/lsst-sqre/squash}{SQuaSH github}
-\label{sec:orge74efa2}
+\label{sec:orgaa8027b}
 \end{itemize}
 \subsection{{\bfseries\sffamily TODO} faro}
-\label{sec:org8056d2c}
+\label{sec:org4c2e1ae}
 \begin{itemize}
 \item Notes here from discussions with Colin Slater of \textit{[2021-02-25 Thu]}
-\label{sec:org0cbb071}
+\label{sec:org1848124}
 \item Turns catalogs into scalar metrics
-\label{sec:org95158c3}
+\label{sec:orgc13b185}
 \begin{itemize}
 \item faro takes processed catalogs as input
-\label{sec:org24f5861}
+\label{sec:orge9ad96d}
 \item combines and measures things in catalog space
-\label{sec:orgb5cefd8}
+\label{sec:orgc042e67}
 \begin{itemize}
 \item photometrec repeatability
-\label{sec:orge28b666}
+\label{sec:org4a1a147}
 \item astrometric repeatabaility
-\label{sec:org31accb4}
+\label{sec:orgb815d14}
 \item other statistics
-\label{sec:orge72f727}
+\label{sec:orga262d39}
 \end{itemize}
 \end{itemize}
 \item Operations on metric values
-\label{sec:orgde66c44}
+\label{sec:org3b73ef5}
 \begin{itemize}
 \item Packages them
-\label{sec:org9ad67fb}
+\label{sec:orgd9ef90a}
 \item sends them to SQuaSH's  time series database
-\label{sec:orgc010668}
+\label{sec:orgc396923}
 \item keeps track of how metrics change over time
-\label{sec:orgc0170e6}
+\label{sec:orgc9631c0}
 \item based on assumption of a time series of scalars, not vectors, plots or other complex data structures
-\label{sec:orga16bd11}
+\label{sec:orgbaa6b3a}
 \end{itemize}
 \item Currently used to keep track of pipeline code's progress
-\label{sec:orgb6d5906}
+\label{sec:org6c666db}
 \item Generic infrastructure to convert catalogs to metrics, then store them.
-\label{sec:orgf4a7301}
+\label{sec:orgf078589}
 \item Works on time series of single scalars that can be plotted as a function of time.
-\label{sec:org194558a}
+\label{sec:org0c81a41}
 \item faro feeds the time series databes that feeds SQuaSH's influx DB
-\label{sec:org155f027}
+\label{sec:orge114692}
 \item faro is a set of pipeline tasks that run in a gen3 task execution framework
-\label{sec:org9175a94}
+\label{sec:org4b5d1d8}
 \item metrics themselves are stored in the butler
-\label{sec:org04eb66c}
+\label{sec:orgdd530b4}
 \item much of what scheduling and survey progress would need would be in the EFD
-\label{sec:org6ca0bad}
+\label{sec:org08802cb}
 \begin{itemize}
 \item not clear how to get data into the DM framework.
-\label{sec:org3ba6338}
+\label{sec:org53f2046}
 \end{itemize}
 \item What is the right database for these derived quantities.
-\label{sec:org63a7caf}
+\label{sec:orgbbafa84}
 \end{itemize}
 \subsection{{\bfseries\sffamily TODO} LOVE}
-\label{sec:orgf2747bf}
+\label{sec:org663cee3}
 \begin{itemize}
+\item \url{https://confluence.lsstcorp.org/pages/viewpage.action?pageId=60950797}
+\label{sec:orgdab6217}
 \item \url{https://lsst-ts.github.io/LOVE-integration-tools/html/index.html}
-\label{sec:orge2248e5}
+\label{sec:org87a51c0}
 \item \href{https://lsst-ts.github.io/LOVE-integration-tools/html/modules/overview.html\#love-architecture}{Architecture diagram} (section 1.2)
-\label{sec:org4a1e39a}
+\label{sec:orgf239f96}
 \item Communication consists of (from \url{https://lsst-ts.github.io/LOVE-integration-tools/html/modules/overview.html})
-\label{sec:org6cef279}
+\label{sec:org46c6def}
 \begin{itemize}
 \item telemetry
-\label{sec:org6b23e50}
+\label{sec:orgfab75a6}
 \item events (including "observing log events")
-\label{sec:org83d94ce}
+\label{sec:org23863cc}
 \item commands
-\label{sec:org9e97ff5}
+\label{sec:org96d4434}
 \item command acknoweldgement
-\label{sec:orgb82b02c}
+\label{sec:org677a085}
 \end{itemize}
 \item Telemetry collected of great interest to strategy and progress tracking, but usually too low level
-\label{sec:orgdbc498c}
+\label{sec:orgaaf819c}
+\end{itemize}
+\subsection{{\bfseries\sffamily TODO} Observatory Logging Ecosystem}
+\label{sec:orgddd6a09}
+\begin{itemize}
+\item \url{https://ls.st/lse-490}
+\label{sec:orga697f34}
+\item \url{https://dmtn-173.lsst.io/}
+\label{sec:org229c229}
 \end{itemize}
 \section{{\bfseries\sffamily MAYBE} Possible new work needed}
-\label{sec:org8b51a81}
+\label{sec:org137b358}
 \subsection{New plots and metrics}
-\label{sec:org1155c00}
+\label{sec:org0676882}
 \begin{itemize}
 \item Lower level than science collaboration metrics, higher level than telemetry
-\label{sec:orgc31a16a}
+\label{sec:orgd0463df}
 \end{itemize}
 \subsection{Infrastructure to run and analyze new simulations}
-\label{sec:orgc06e3c7}
+\label{sec:org58ed1dd}
 \begin{itemize}
 \item Automated execution of opsim and MAF metric calculation
-\label{sec:org32943ed}
+\label{sec:org624a82e}
 \item From tonight to the end of survey
-\label{sec:org8b75cf1}
+\label{sec:org65bce4a}
 \item For tonight under a variety of conditions
-\label{sec:org09fbb6e}
+\label{sec:orgb45f9cf}
 \end{itemize}
 \subsection{Progress dashboard}
-\label{sec:orgdee9a11}
+\label{sec:org61a696e}
 \begin{itemize}
 \item Reference data (opsim inputs)
-\label{sec:org7153911}
+\label{sec:org62bbdc6}
 \begin{itemize}
 \item seeing model vs. achieved
-\label{sec:org2ffc153}
+\label{sec:org4b51bf7}
 \item cloud model vs. achieved
-\label{sec:org0fe1cc2}
+\label{sec:org5903494}
 \item slew time
-\label{sec:org9447317}
+\label{sec:org85e4d05}
 \item filter change time
-\label{sec:org97d4e20}
+\label{sec:org80e7c7a}
 \end{itemize}
 \item Achieved progress
-\label{sec:orgc377284}
+\label{sec:orgd9cbb89}
 \begin{itemize}
 \item Plots and metrics generated by MAF
-\label{sec:org211d0a0}
+\label{sec:org8343f9c}
 \item Currently achieved vs. expected metric values
-\label{sec:org0ee4579}
+\label{sec:orgb9cd0fd}
 \item Metric values extrapolated to end of survey
-\label{sec:org0223069}
+\label{sec:org9be1ba4}
 \end{itemize}
 \item Maybe two? (LOVE and SQuaRE)
-\label{sec:orgd8d39d8}
+\label{sec:org0be637a}
 \begin{itemize}
 \item Not all metrics may be best calculated by the same infrastructure
-\label{sec:org6f6fa42}
+\label{sec:orgad4fe6c}
 \end{itemize}
 \end{itemize}
 \subsection{Report creating infrastructure}
-\label{sec:org0867031}
+\label{sec:org9c3d161}
 \begin{itemize}
 \item Night plans
-\label{sec:org9563eb8}
+\label{sec:org1477da8}
 \item Night reports
-\label{sec:orgd4e96a8}
+\label{sec:org3dbd5f5}
 \item Weekly and/or monthly reports
-\label{sec:org4854e02}
+\label{sec:org22fe93c}
 \end{itemize}

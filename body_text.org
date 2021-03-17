@@ -16,13 +16,13 @@ and not create its own latex preamble (class declaration, etc.)
 then l l (two lower-case "L"s) to export the result to body_text.tex
 
 * Summary
- - Tracking survey progress, comparison of the actual progress both to a baseline and to what would have been expected under similar conditions (e.g. weather) is important for Rubin Observatory staff and management, the science collaborations, the astronomical community, funding agencies, and even the general public.
- - Survey progress and strategy diagnostics will need to be presented in multiple contexts, to a variety of audiences. 
+ - Tracking survey progress, comparison of survey progress to a baseline, and validation of scheduler assumptions are important for Rubin Observatory staff and management, the science collaborations, the astronomical community, funding agencies, and even the general public.
+ - Survey progress and strategy diagnostics will need to be presented in multiple contexts, to a variety of audiences. Generation and presentation of such diagnostics will require multiple tools and processes.
  - Data useful for evaluating survey progress and optomizing strategy is best visualized in a variety of ways. Some useful metrics are best viewed as scalars, or a simple time series. In other cases, complex plots or diagrams are required, and even then such plots may only be effectively interpreted in combination with other plots, diagrams, or descriptive text.
- - Some metrics and visualizations needed for evaluating survey progress and optomizing strategy is "close to the data," and require minimal processing before presentation to the user. In other cases, however, significant analysis is necessary (for example suites of scheduler simulations). This diversity complicates infrastructure requirements.
+ - Some metrics and visualizations needed for evaluating survey progress and optomizing strategy are "close to the data," and require minimal processing before presentation to the user. In other cases, significant analysis is necessary (for example suites of scheduler simulations). This diversity complicates infrastructure requirements.
  - Generation of survey progress and strategy diagnostics requires both data generated "close to the instrument" (telemetry from the telescope) and data only available from other sources such as the output of processing by Data Management and the results of strategy simulations.
  - Rubin Observatory infrastructure currently under development (including opsim, MAF, SQuaRE/SQuaSH, LOVE, the Engineering and Facilities Database (EFD), and the Data Management butler) provides or will provide an array data sources and visualzation tools. It is not always clear, however, which tools are a good match for which strategy and progress related metrics, and work is required take advantage of this existing infrastructure.
-* TODO Introduction
+* ACTIVE Introduction
 
 Progress and strategy diagnostics (metrics, plots, and other figures) are usefully characterized by several features.
 
@@ -198,7 +198,7 @@ The specifications require that the report summarize "per system performance and
 This report is a natural home for the nightly scheduler behaviour diagnostics (described in section [[*Nightly scheduler behaviour diagnostics]]), when applied to actual (as opposed to simulated) scheduled nights.
 Furthermore, some elements of the survey state description (section [[*Survey state descriptions]]) will be of broad enough interest that updates to them may be usefully included after each night.
 
-In addition to the diagnostics directly related to scheduling, several of the data quality indicators that will be reported in the night report (following LSE-61/DMS-REQ-0097) to monitor the health of other subsystems are close to those needed for validation of the scheduler's site and telescope model (section [[*Validation of the site and telecope model]]). If these elements are produced with the needs of the scheduler scientists in mind, these same plots may fill both needs.
+In addition to the diagnostics directly related to scheduling, several of the data quality indicators that will be reported in the night report (following LSE-61/DMS-REQ-0097) to monitor the health of other subsystems are close to those needed for validation of the scheduler's site and telescope model (section [[*Validation of the site and telescope model]]). If these elements are produced with the needs of the scheduler scientists in mind, these same plots may fill both needs.
 
 So, to support scheduler and survey progress monitoring, the night report should include:
  - Comparisons of system characteristics (slew time, filter change time, depth, sky brightness, etc.) with models used by the scheduler simulator.
