@@ -22,14 +22,14 @@ then l l (two lower-case "L"s) to export the result to body_text.tex
  - Some metrics and visualizations needed for evaluating survey progress and optomizing strategy are "close to the data," and require minimal processing before presentation to the user. In other cases, significant analysis is necessary (for example suites of scheduler simulations). This diversity complicates infrastructure requirements.
  - Generation of survey progress and strategy diagnostics requires both data generated "close to the instrument" (telemetry from the telescope) and data only available from other sources such as the output of processing by Data Management and the results of strategy simulations.
  - Rubin Observatory infrastructure currently under development (including opsim, MAF, SQuaRE/SQuaSH, LOVE, the Engineering and Facilities Database (EFD), and the Data Management butler) provides or will provide an array data sources and visualzation tools. It is not always clear, however, which tools are a good match for which strategy and progress related metrics, and work is required take advantage of this existing infrastructure.
-* ACTIVE Introduction
+* Introduction
 
 Progress and strategy diagnostics (metrics, plots, and other figures) are usefully characterized by several features.
 
- - Audience :: Different diagnostics and figures are useful to different audiences. Possible audiences include reviewers for and administrators of funding agencies, Rubin Observatory management, LSST science collaboration scientists, the Rubin Observatory observing scientists, the scheduler developers, astronomers working on other projects, other members of the astronomical community, and the general public. 
+ - Audience :: Different diagnostics and figures are useful to different audiences. Possible audiences include reviewers for and administrators of funding agencies, Rubin Observatory management, LSST science collaboration scientists, the Rubin Observatory Observatory Scientist, Observatory Support Scientists, Observing Specialists, Scheduler Scientists and Survey Software Engineers, astronomers working on other projects, other members of the astronomical community, and the general public. 
  - Format :: The diagnostics may take any of serveral forms, including simple scalars, time series and other plots, maps, or other represntations of distributions. 
  - Timing :: Diagnostics will need to be produced on range of timescale, ranging from hours to months. Some need to be produced shortly before or after each night of observing, or even periodically throughout the night. Others can be produced on a monthly schedule, or only in preparation for meetings and reviews.
- - Required data :: Data required to produce different diagnostics may originate in a variety of sources, including observatory telemetry, fully analyzed data products from Data Management, or sources outside the project (e.g. weather services).
+ - Required data :: Data required to produce different diagnostics may originate in a variety of sources, including observatory telemetry, data products from Data Management, or sources outside the project (e.g. weather services).
  - Computing resources :: In some cases diagnostics can be produced with minimal calculation from available data sources. In other cases significant processing, up to and including suites of =opsim= simulations and corresponding calculation of metrics using =MAF=, will be required.
 
 Each of these characteristics place requirements on the tools used to generate and provide access to the diagnostics.
@@ -39,11 +39,34 @@ Each of these characteristics place requirements on the tools used to generate a
 Figures and diagrams describing the current "state of the survey" will be of great interest to the community as a whole, and and providing an understanding of whether or not they correspond to the plan for the survey will be essential for explaining how well the survey is proceeding.
 Examples of such diagrams will include:
 
- - depth maps :: Maps of the survey showing the numbers of total visit, numbers of visits in each filter, and coadd limiting magnitude in each filter are likely to be the most prominant figures that show the current state of the survey. Maps cut in an assortment of ways, for example including only visits with PSF widths narrower than some cutoff, will also be of significant interest.
- - time use hourglass plots :: A single graphic that summarizes how time has been used by the survey so far will also be of wide interest. A plot that color-codes the use of time night on one axis and time of night on the other is an effective means of conveying this information. Likely categorize to by symbolized by colors include: down time due to equipment failure, down time due to regular maintenance or engineering, down time due to weather, observing time without useful exposures (e.g. due to overcast skies), time spent on observations outside the WFD footprint (possible separated by mini-survey), time spent on DDFs, and other time in the WFD.
- - data quality hourglass plots :: A plot similar to the time use hourglass plot, but instead of color coding separate science programs, represent data quality ($5\sigma$ limiting magnitude relative to nominal depth).
+ - depth maps :: Maps of the survey showing the numbers of total visit, numbers of visits in each filter, and coadd limiting magnitude in each filter are likely to be the most prominant figures that show the current state of the survey. Current tools for evaluation of survey simulations produce examples of such plots, and [[http://astro-lsst-01.astro.washington.edu:8081/allMetricResults?runId=392#Basic%20Maps][results pages]] show examples of such maps for the end of simulated surveys. Maps cut in an assortment of ways, for example including only visits with PSF widths narrower than some cutoff, may also be of interest. Figure [[fig:depthmap]] shows an example of a depth map produced by MAF, for the end of a baseline survey. 
+ - depth/area plot :: A plot of the total area on the sky covered by the survey as a function of minimum depth will also be a useful representation of progress. Figure [[fig:deptharea]] shows an example of such a plot produced by MAF, for the end of a baseline survey. When used to show survey progress, reference curves from a baseline simulation should be included as well.
+ - filter use hourglass plots :: A single graphic that shows the distribution of filter use by time of night and year, and in relation to the moon, can indicate whether dark time is being used efficiently. The [[http://astro-lsst-01.astro.washington.edu:8081/allMetricResults?runId=392#Hourglass][results pages]] give examples of such plots for the ends of simulated surveys. Figure [[fig:filterhourglass]] shows an example of such a plot produced by MAF, for the end of a baseline surevy.
+ - time use hourglass plots :: A single graphic that summarizes how time has been used by the survey so far will also be of wide interest. A plot will be a similar appearance to that of filter use hourglass plots, and like the plot will indicate time of year on one spatial axis and time of night on the other. Instead of indicating filter, however, this hourglass plot would indicate whether the pointing being observed corresponds to the FWD survey, a mini survey, or (if not science observing) what other activity was taking place. Likely categories to by symbolized by colors include: down time due to equipment failure, down time due to regular maintenance or engineering, down time due to weather, observing time without useful exposures (e.g. due to overcast skies), time spent on observations outside the WFD footprint (possible separated by mini-survey), time spent on DDFs, and other time in the WFD.
+ - data quality hourglass plots :: A plot similar to the filter and time use hourglass plots, but uses the color coding to represent data quality (as measured by $5\sigma$ limiting magnitude relative to nominal depth).
  - transient detection efficiency maps :: Maps of detection efficiency for different classes of variable objects (bright and faint near Earth objects (NEOs), TransNeptunian Objects (TNOs), Tidal Disruption Events (TDEs), fast microlensing events, type 1a supernovae, and others) over the footprint, for the entire survey so far and for the current season.[fn:: Gaps between seasons may be defined to be gaps between visits than include the date on which the sun has the same R.A. as the point on the sky.]
- - deep drilling field (DDF) cadence and transient efficiency plots :: A set of plots (one for each DDF) showing the nights on which each DDF has been observed in the current season, and marking the time since it was last observed in each filter. Such plots may also encode the depth of exposures in each band on each night. The detection efficiency and actual numbers of detections for different classes of transients may be plotted on the same time axis, showing how gaps of different sizes affect the science for different classes of objects.
+ - deep drilling field (DDF) cadence plots :: A set of plots (one for each DDF) showing the nights on which each DDF has been observed in the current season, and marking the time since it was last observed in each filter. Such plots may also encode the depth of exposures in each band on each night. Figure [[fig:snhistory]] shows a sample cadence plot made using simulated data.
+ - DDF transient efficienty plots ::  The detection efficiency and actual numbers of detections for different classes of transients may be plotted as a function of date for each DDF. If these plots were combined with the DDF cadence plots, these plots may also guide an intuition for how gaps of different sizes affect the science for different classes of objects.
+
+#+CAPTION: Example depth map from MAF, for the state of the survey at the conclusion of the 10 year baseline simulation.
+#+NAME: fig:depthmap
+[[file:./figures/baseline_nexp2_v1_7_10yrs_CoaddM5_HEAL_SkyMap.pdf]]
+
+#+CAPTION: Example depth-area plot from MAF, for the state of the survey at the conclusion of the 10 year baseline simulation.
+#+NAME: fig:deptharea
+#+ATTR_LaTeX: :height 0.4\textheight
+[[file:./figures/baseline_nexp2_v1_7_10yrs_fO_All_visits_HEAL_FO.pdf]]
+
+
+#+CAPTION: Example filter use hourglass plot from MAF, for the state of the survey at the conclusion of the 10 year baseline simulation. The black line along the bottom shows the lunar phase. The red and blue lines show nautical and civil twilight. 
+#+NAME: fig:filterhourglass
+#+ATTR_LaTeX: :height 0.4\textheight
+[[file:./figures/baseline_nexp2_v1_7_10yrs_Hourglass_year_0-1_HOUR_Hourglass.pdf]]
+
+#+CAPTION: A mock-up of an LSST DDF cadence plot, made using the version 1.7 baseline. Each subplot shows the cadence of a DDF field. The colors of the bars at each date represent different filters, and the heights of each color in each bar represents the combined effective exposure time, $t_{eff} = 0.8 \times 10^{m5_{lim}-m_{0}}$, on that night in that filter, so that limiting magnitude of a coadded exposures from that night in that filter is $m5_{lim} = m_{0} + \frac{5}{4} \log t_{eff}$.  In addition to the features shown in this mock-up, it would also be useful to show the nights of full moon, closest approach of the moon to each field, nights closed due to weather and other downtime, and time since the last set of visits deeper than some reference limiting magnitude.
+#+NAME: fig:snhistory
+#+ATTR_LaTeX: :height 0.4\textheight
+[[file:./figures/snhistory.pdf]]
 
 ** Time series progression of scalar survey metrics
 Many science metrics are expected to improve continuously over the course of the survey.
@@ -55,24 +78,28 @@ For each metric, there are two and perhaps three quantities that can be usefully
 Estimated and achieved may differ in cases where the metric ultimately depends on the final catalogues of objects, which can only be estimated using the simple list of visits and data quality parameters produced by =opsim=.
 One example of this would be the total number of stars and galaxies detected (PSTN-51 sections 3.3 and 3.6): errors and limited precision in the model for the distribution of stars and galaxies will result in a difference between the estimated and achieved values of the metric.
 
- - Total, mean, median, min, max, and quantiles of numbers of visits :: Table 23 of [[http://ls.st/lpm-17][LPM-17]], "The LSST System Science Requirements Document," gives specifications for the "sum of the median number of visits in each band, Nv1, across the sky area". Additional statistics beyond the median are also indicative of the quality of the survey: highly skewed distributions, long tails to the distribution, or a significant difference between the mean and median could all indicate problems in scheduling. Good candidates for showing the time series of this distributions would be a time series boxplot or violin plot.
+ - Total, mean, median, min, max, and quantiles of numbers of visits :: Table 23 of [[http://ls.st/lpm-17][LPM-17]], "The LSST System Science Requirements Document," gives specifications for the "sum of the median number of visits in each band, Nv1, across the sky area". Additional statistics beyond the median are also indicative of the quality of the survey: highly skewed distributions, long tails to the distribution, or a significant difference between the mean and median could all indicate problems in scheduling. Good candidates for showing the time series of this distributions would be a time series boxplot or violin plot. See figure [[fig:nvboxplot]] for a sample created from the run 1.7 baseline simulation. 
  - Numbers of science visits by band :: In addition to the sum across all bands, the distributions of visits in each band individually, and relative to each other, are also good indicators of whether the scheduler is behaving as expected. Time series plots of the visits split by band should rougly a constant proportionality on a timescale of months, but differences within each lunation, due to filters being swapped out and redder filters being preferentially chosen when the moon is very bright. 
  - Numbers of science visits by R.A. :: Because the visibility of areas of the sky varies with the time of year, the distribution of visits across the sky is not expected to be uniform. Ideal visibility varies with R.A., so if the survey is ultimately to be uniform, the calendar observing dates elapsed and remaining need to corresponding rougly to the distribution of completed and needed visits for uniformity across the footprint. Plots of the number of visits in a set of R.A. bins as a function of date should show clear jumps at times when those R.A.'s correspond to local Sidereal times (LSTs) during the night in those times of year.
  - Numbers of science visits by program :: The fraction of time dedicatated to the Wide-Fast-Deep (WFD) survey and mini-surveys (including the Deep Drilling Fields (DDFs), Galactic Plane (GP), North Ecliptic Spur (NES), South Celestial Pole (SEP), and Target of Opportunity observations (ToOs)) will be specified as part the establishment of survey strategy, and whether the scheduler is adhering to these decisions should be monitored.
- - Science collaboration metrics :: Section [[https://ls.st/pstn-051][PSTN-51]], "Survey Strategy and Cadence Choices for the Vera C. Rubin Observatory Legacy Survey of Space and Time (LSST)," specifies a set of metrics contributed by the LSST science collaborations, including:
+ - Science collaboration metrics :: [[https://ls.st/pstn-051][PSTN-51]], "Survey Strategy and Cadence Choices for the Vera C. Rubin Observatory Legacy Survey of Space and Time (LSST)," specifies a set of metrics contributed by the LSST science collaborations, including:
    + detection completeness for different classes of transients and moving objects
    + numbers of stars and galaxies
    + the dark energy 3x2 Figure of Merit (FoM)
    Supplements and refinements to these metrics are expected.
 
+#+CAPTION: Distributions of the number of visits in the best 18000 square degrees by year, for the the 1.7 2 visit baseline.
+#+NAME: fig:nvboxplot
+[[file:./figures/numvisits_boxplot.pdf]]
+
 ** Predicted scalar metrics for the final survey as a function of time
-Many metrics for the ultimate state of the survey do not improve smoothly with time.
+Many survey metrics do not improve uniformly or even smoothly with time.
 For example, the accumulated visits will be spread roughly uniformly over the survey footprint at any given time, so the area of sky observed to the nominal depth (specified in table 22 of [[http://ls.st/lpm-17][LPM-17]]) will remain near zero for most of the survey, and then rise rapidly at the end: simply tracking the area covered to the nominal depth as a function of time does not provide a useful indication of progress being made toward achieving this metric.
 Progress toward achieving this requirement can, however, be tracked using simulations: if the remainder of the survey is simulated after each night of observing and the final metrics measured using the final result, the time series can be plotted to indicate how much progress the survey is making in comparison with what is required.
 A flat horizontal line will indicate a survey progressing exactly as expected based on simulations.
 A rising line will indicate that the survey is making more progress than expected, while a falling one indicates that the survey is falling behind.
 
-The final area is not the only metric for which these simulations are good tools for indicating progress; all of the scalar science metrics provided by the science working groups can be plotted in the same way. Plotting a selection of such metrics can show whether the current conditions or startegy are favoring some science goals over others in unexpected ways.
+The final area is not the only metric for which these simulations are good tools for indicating progress; all of the scalar science metrics can be plotted in the same way. Plotting a selection of such metrics can show whether the current conditions or startegy are favoring some science goals over others in unexpected ways.
 The list of metrics tracked this way should be the same as that in section [[*Time series progression of scalar survey metrics]].
 
 ** Nightly scheduler behaviour diagnostics
@@ -87,7 +114,7 @@ Examples of such diagnostics include:
  - Feature maps :: Modern version of =opsim= select visits (or sets of visits grouped into "blobs") based on "features" that are functions of location on the sky: the slew time to reach the location on the sky, the expected depth of exposures to be taken there, and the progress made so far on that portion of the sky. A weighted mean of these features determines the selection of the next visit or set of visits. Examination of maps of these visits and the resultant final reward function is therefore fundamental to understanding the scheduler's behaviour. The presentation of the feature maps is complicated by the variablity with time and dependence on current pointing. Two candidate formats may be useful:
    + animation :: a movie of the map over the night will provide the most detail, but can be difficult to navigate.
    + maximum feature values :: maps of the maximum value each point on the sky takes over the course of the night will be a useful indicator of how likely the scheduler is to schedule visits in these areas at some point in the night.
- - Full table of scheduled visits :: To support coordination between Rubin Observatory and other projects, [[https://ls.st/lse-61][LST-61]]/DMS-REQ-0353 requires that "A service shall be provided to publish to the community the next visit location and the predicted visit schedule provided by the OCS. This service shall consist of both a web page for human inspection and a web API to allow automated tools to respond promptly." Such a table (in both forms) will be useful not only to external projects, but also to the observing scientists for understanding what to expect from the upcomming night, and for the scheduling team to catch potential issues with the scheduler.
+ - Full table of scheduled visits :: To support coordination between Rubin Observatory and other projects, [[https://ls.st/lse-61][LST-61]]/DMS-REQ-0353 requires that "A service shall be provided to publish to the community the next visit location and the predicted visit schedule provided by the OCS. This service shall consist of both a web page for human inspection and a web API to allow automated tools to respond promptly." Such a table (in both forms) will be useful not only to external projects, but also to the observing scientists for understanding what to expect from the upcomming night, and for the Scheduling Scientists to catch potential issues with the scheduler.
  - Pointing movie :: A movie of the pointings of the telescope over the course of the night will be one of the fastest ways to convey an understanding of what the scheduler will do (before the night) or did (after it). Superposition of the pointings over the feature map.
  - Global observing efficiency :: The ratio of the total science exposure time to the available time (measured using morning and evening twilight as references) provides a good, gross indicator of whether the scheduler is scheduling visits efficiently (minimizing overhead time).
  - Gap distribution :: A histogram of the gaps in time between successive visits can indicate where inefficiencies in observing come from.
@@ -121,7 +148,7 @@ While some of these characteristics are functions of others, independent measure
 
 In many cases, these characteristics will be tracked as part of telescope operations, independent of direct strategy considerations.
 However, tracking and maintaining survey strategy requires presentation in a way that supports easy comparison to and updating of the =opsim= models.
-Either the tracking and monitoring being done for other systems should include the necessary comparisons to the =opsim= models, or separate variations should be generated for the strategy team.
+Either the tracking and monitoring being done for other systems should include the necessary comparisons to the =opsim= models, or separate variations should be generated for the Scheduling Scientists and Survey Software Engineers.
 
 ** Disruption consequence analysis
 The project will need to be able to quantify the consequences of departures from the final baseline strategy, both in advance and in retrospect. 
@@ -158,7 +185,7 @@ These plots and metrics can be produced and presented in any of several ways:
  - Reports :: The project will need to produce reports covering survey status and progress, whether in the form of documents and presentations. Many of the plots and metrics displayed in an information dashboard will be important elements in these reports. 
 
 The intended audience and the frequency of reporting are both important feature to consider in determining how any given metric or plot is to be generated.
-Possible audiences include the funding agencies, Rubin Observatory management, LSST science collaboration scientists, the Observatory Science team (including the Observatory Scientist), the Observing Specialists, the Observatory Support Scientists, the Scheduler Scientists, astronomers working on other projects, other members of the astronomical community, and the general public. 
+Possible audiences include the funding agencies, Rubin Observatory management, LSST science collaboration scientists, the Observatory Science team (including the Observatory Scientist), the Observing Specialists, the Observatory Support Scientists, the Scheduler Scientists, Survey Software Engineers, astronomers working on other projects, other members of the astronomical community, and the general public. 
 Plots and metrics may be generated on regular schedules (nightly, monthly, or quarterly), or as occasions demand.
 
 The LSST system and data management requirements ([[https://ls.st/lse-29][LSE-29]] and [[https://ls.st/lse-61][LSE-61]]) and observatory systems specifications ([[https://ls.st/lse-30][LSE-30]]) include requirements on several reports and reporting tools. The roles and activities in the [[https://docushare.lsst.org/docushare/dsweb/Get/Document-36797/Rubin%20Observatory%20Operations%20Plan%20April%202020.pdf][Rubin Observatory Operations Plan]] imply additional reports, and imply additional requirements on those already described.
@@ -240,10 +267,30 @@ So, to support scheduler and survey progress monitoring, the night report should
  The DMS shall produce a Level 1 Performance Report that provides indicators of how the DMS has performed in processing the night's observations, including at least: number of observations successfully processed through each pipeline; number of observations for each pipeline that had recoverable failures (with a record of the failure type and recovery mechanism); number of observations for each pipeline that had unrecoverable failures; number of observations archived at each DMS Facility; number of observations satisfying the science criteria for each active science program.
  #+end_quote
 
-** ACTIVE Tools for performance evaluation and analysis
-The Observatory Scientist, Observatory Support Scientists, and the Survey Scheduling team will need to routinely monitor survey progress and assumptions at a more detailed level than supported by the night log alone.
-This monitoring will require routine monitoring of most or all diagnostics listed in section [[*Metrics, plots, and other diagnostics]]. 
-Such routine monitoring if the full set of these plots were generated automatically after every night of observing. 
+** Tools for performance evaluation and analysis
+The Observatory Scientist, Observatory Support Scientists, and the Survey Scheduling team will need to routinely monitor survey progress and assumptions at a more detailed level than supported by the night reports alone:
+detailed monitoring will require all diagnostics listed in section [[*Metrics, plots, and other diagnostics]].
+Furthermore, additional diagnostics will be required to debug specific problems, understand anomalies, and evaluate changing conditions or survey priorities.
+
+In most cases, the different diagnostics will depend on a common set of data, including:
+ - observatory telemetry
+ - one or more baseline survey simulations
+ - the record of the visits completed up to and including the most recent night (including data quality information)
+ - simulations of the future of the survey, starting with the next night of observing.
+ - previously completed survey simulations, starting after each completed night of observing.
+
+In some cases, analysis for scheduling and survey strategy may use tools developed for other purposes, such as maintenance of the instrument itself (as specified in [[https://ls.st/lse-30][LSE-30]]/OSS-REQ-0067).
+In other cases, analysis will require more flexible computation or access to data, including creation of custom scheduler simulations, access to archives of completed scheduler simulations, data management results, or even external data sources.
+Once code for creation of a diagnostic is developed, the processes and tools used should support easy or automatic regeneration of the diagnostic.
+When the creation is not computationally expensive, including it in a set of diagnostics to be automatically regenarated and posted nightly should be straightforward.
+For computationally expensive diagnostics, inclusion in a set of diagnostics that can be repeated "on demand" should be similarly straightforward.
+
+The set of tools available to the Survey Scientist, Survey Support Scientist, and the Survey Scheduling team should therefore include:
+ - APIs that provide access to observatory telemetry, archives of survey simulations, and DM output from within a common environment. These tools will therefore require access to either the summit Engineering and Facilities Database (EFD, [[https://ls.st/sql-034][SQR-034]]) or the data management EFD (DM-EFD, [[https://ls.st/sqr-029][SQR-029]]) for the telemetry data, and the DM butler for access to DM output. Access to an archive of past =opsim= simulations and the metrics calculated from them will also be required. That can be achieved by any of several means, including a simple filesystem.
+ - A computational environment that includes the analysis and tools needed for computing diagnosits (e.g. jupyter notebooks with environments that include =opsim=, =MAF=, and stardard python scientific libraries)
+ - Tools for automatic execution of lightweight code written to calculate diagnostics.
+ - Tools for on-demand execution of computationally expensive diagnostic calculation.
+ - A tool for collection and presentation of calculated diagnostics.
 
 *** Notes                                                          :noexport:
 
@@ -319,7 +366,7 @@ The [[https://docushare.lsst.org/docushare/dsweb/Get/Document-36797/Rubin%20Obse
 Responsible for producing a quarterly report on the scheduled/expected observations versus the performed observations. This analysis includes monitoring the assumptions used by the scheduler including slew times, shutter open/close times, readout times etc. 
 #+end_quote
 
-Multiple such reports will be made on different schedulers, customized for different audiences.
+Multiple such reports will be made on different schedules, customized for different audiences.
 All of these reports may draw from any of the report elements descibed in section [[*Metrics, plots, and other diagnostics]], but it is unlikely that any single report will require every element.
 While the generation of individual elements will benefit from automation, the compilation and construction of such reports will require human attention and customization to each audience.
 
@@ -396,17 +443,32 @@ Good candidates for presentation to the public are movies of numbers of exposure
 
 *** [[https://ls.st/lse-29][LSE-29]]/LSR-REQ-0116 EPO Fully Integrated                       :noexport:
 * Infrastructure needs
-** TODO Data collection
-*** Retrieving data from the EFD
-*** Retrieving data from the DM butler
-** TODO Data processing
-*** Running opsim simulations
-*** Running MAF metrics
-** TODO Data storage?
-** TODO Exploration tools
-** TODO Dashboards
-** TODO Report generation
+ - Data collection, storage, retrieval, and distribution :: Calculation of metrics and other diagnostics require a variety of data, including:
+   + summit telemetry data :: Telemetry data will be stored in the summit EFD and also a DM-EFD. Access to either of these through an API should be sufficient for strategy, scheduler, and progress monitoring needs.
+   + data management results :: Some metrics such as total counts of stars and galaxies will require access to the results of data management. The DM butler is one option for such access.
+   + simulation results :: The progress monitoring infrastructure will need an archive of =opsim= simulations, to which new simulations may be stored and from which old ones may be retrieved. Such results could potentially be stored a combination of the DM butler, but mechanisms such as a simple filesystem are likely to be adequate.
+   +  diagnostic results :: Metrics, plots, and other diagnostics will also need to be archived. These results could potentially be stored and and retrieved from the butler, and some of them may be suitable for a time series database such as that used by the EFDs, but such solutions may also be unnecessarily complex: a simple filesystem and small relational database are likely to be adequate for this task.
+ - Data processing :: A handful of =opsim= simulations will need to be run after each night of observing, and a standard set of metrics calculated for them. Such simulations take a 6 to 8 hours to complete on 2020 hardware, so cannot be performed on demand. However, a simple single node with a cron job could adequately perform the task. 
+ - Dashboards and report generation :: Mechanisms for preseting the generated diagnostics and metrics will be required. For sets that should be reviewed daily, diagnostics  should be presented in pre-made sets according to their usage, without a need for the user to select or customize plots each time. For example, plots needed for the night plan and night report should be presented web pages or report templates without the need for human interaction or customization.
+
 * Available infrastructure
+ - opsim :: The existing scheduler software product already supports creation of simulations, and such capabilities will be maintained thoughout the life of the survey.
+ - The Metrics Analysis Framework (MAF) :: MAF provides a collection of tools in python for the analysis of scheduler simulation results, and the science collaborations have developed (and are continuing to develop) metric calculation tools within this framework. 
+ - Engineering and Facilities Database (EFD) :: Observatory telemetry will be stored in EFDs. There are two EFDs under development: the summit EFD ([[https://ls.st/LTS-210][LTS-210]]) and the Data Management (DM) EFD ([[https://sqr-029.lsst.io/][SQR-029]]).  Data associated with validation of the site and telescope model used by the scheduler (section [[*Validation of the site and telescope model]]) will require access to one of these databases.
+ - Data Management Butler :: The butler is the archiving and access tool that will be used by Data Management to store the results of processing. Calculation of several scheduler diagnostics will require access to this data. Examples include limiting magnitudes and other data quality measures and numbers of different types of objects detected (e.g. stars, galaxies). The butler appears to be flexibile enough to support storage of scheduler-related data sets, including the results of simulations themselves, but it is unclear that there are any advantages of storing such data in the butler rather than a simple file system.
+ - Science Quality Analysis Harness (SQuaSH) :: SQuaSH ([[https://sqr-009.lsst.io/][SQR-009]]) provides infrastructure for monitoring data management pipeline tasks. This infrastructure has many features in common with what is required for scheduling and survey progress related tasks. Elements of the SQuaSH infrastructure include (shown in the architecture diagram in SQR-009):
+   + execution environment :: SQuaSH includes a verification job execution environment.
+   + time series database :: SQuaSH seems to be built around the assumption that each metric is best examined as a time series of scalar values. This is true for many progress and scheduling related metrics, but there are important exceptions, such as depth maps or distributions. 
+   + metric visualization :: SQuaSH includes an instance of [[https://docs.influxdata.com/chronograf/v1.8/][chronograph]], a timeseries visualization tool designed to work with the selected implementation of the time series database, [[https://www.influxdata.com/products/influxdb/][InfluxDB]]. It seems likely that this tool would be useful for visualization of many of our time series metrics, but may lack the specialized visualizations present in existing tools like MAF, such as hourglass plots.
+   + external dashboards :: 
+   + Nublado :: 
+   + nbreport :: SQuaRE includes infrastructure for running jupyter notebooks as templates for periodic reports, and uses the night report as a reference example ([[https://sqr-026.lsst.io/][SQR-026]]). This system might be suitable for generation of the night plan, and as reports that can serve as first drafts for longer, less frequent reports.
+   + S3 datastore :: 
+ - faro ::
+ - LOVE ::
+ - Observatory Logging Ecosystem ::
+
+* Available infrastructure notes                                   :noexport:
 ** TODO opsim
 ** TODO MAF
 ** TODO Engineering and Facilities Database (EFD)
@@ -462,7 +524,7 @@ Good candidates for presentation to the public are movies of numbers of exposure
 ** TODO Observatory Logging Ecosystem
 *** https://ls.st/lse-490
 *** https://dmtn-173.lsst.io/
-* MAYBE Possible new work needed
+* MAYBE Possible new work needed                                   :noexport:
 ** New plots and metrics
 *** Lower level than science collaboration metrics, higher level than telemetry
 ** Infrastructure to run and analyze new simulations
