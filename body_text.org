@@ -15,7 +15,7 @@ then C-b to configue it to export just the content,
 and not create its own latex preamble (class declaration, etc.)
 then l l (two lower-case "L"s) to export the result to body_text.tex
 
-* Summary
+* Summary                                                          :noexport:
  - Tracking survey progress, comparison of survey progress to a baseline, and validation of scheduler assumptions are important for Rubin Observatory staff and management, the science collaborations, the astronomical community, funding agencies, and even the general public.
  - Survey progress and strategy diagnostics will need to be presented in multiple contexts, to a variety of audiences. Generation and presentation of such diagnostics will require multiple tools and processes.
  - Data useful for evaluating survey progress and optomizing strategy is best visualized in a variety of ways. Some useful metrics are best viewed as scalars, or a simple time series. In other cases, complex plots or diagrams are required, and even then such plots may only be effectively interpreted in combination with other plots, diagrams, or descriptive text.
