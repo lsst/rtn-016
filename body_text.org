@@ -15,13 +15,14 @@ then C-b to configue it to export just the content,
 and not create its own latex preamble (class declaration, etc.)
 then l l (two lower-case "L"s) to export the result to body_text.tex
 
-* Summary                                                          :noexport:
+* Old Summary                                                      :noexport:
  - Tracking survey progress, comparison of survey progress to a baseline, and validation of scheduler assumptions are important for Rubin Observatory staff and management, the science collaborations, the astronomical community, funding agencies, and even the general public.
  - Survey progress and strategy diagnostics will need to be presented in multiple contexts, to a variety of audiences. Generation and presentation of such diagnostics will require multiple tools and processes.
  - Data useful for evaluating survey progress and optomizing strategy is best visualized in a variety of ways. Some useful metrics are best viewed as scalars, or a simple time series. In other cases, complex plots or diagrams are required, and even then such plots may only be effectively interpreted in combination with other plots, diagrams, or descriptive text.
  - Some metrics and visualizations needed for evaluating survey progress and optomizing strategy are "close to the data," and require minimal processing before presentation to the user. In other cases, significant analysis is necessary (for example suites of scheduler simulations). This diversity complicates infrastructure requirements.
  - Generation of survey progress and strategy diagnostics requires both data generated "close to the instrument" (telemetry from the telescope) and data only available from other sources such as the output of processing by Data Management and the results of strategy simulations.
  - Rubin Observatory infrastructure currently under development (including opsim, MAF, SQuaRE/SQuaSH, LOVE, the Engineering and Facilities Database (EFD), and the Data Management butler) provides or will provide an array data sources and visualzation tools. It is not always clear, however, which tools are a good match for which strategy and progress related metrics, and work is required take advantage of this existing infrastructure.
+
 * Introduction
 
 Once underway, a wide variety of people will have in interest in tracking the progress of Rubin Observatory in making the Legacy Survey of Space and Time (LSST).
@@ -87,7 +88,7 @@ Examples of such diagrams will include:
 ** Time series progression of scalar survey metrics
 Many science metrics are expected to improve continuously over the course of the survey.
 For each metric, there are two and perhaps three quantities that can be usefully compared:
- - baseline :: the value of the metric for the given time, as measured from a reference simulation.
+ - baseline :: the value of the metric for the given time, as measured frllom a reference simulation.
  - estimated :: the value of the metric for the given time, measured from the actually collected visits and visit parameters in the same way they were measured against the baseline simulation.
  - achieved :: the value of the metric as mearused from the final processed data products.
 
@@ -119,7 +120,7 @@ A corresponding figure used for tracking purposes should also include indicators
 #+NAME: fig:progressbyquarter
 [[file:./figures/progress_by_quadrant.png]]
 
-** Predicted scalar metrics for the final survey as a function of time
+** Projected scalar metrics for the final survey as a function of time
 Many survey metrics do not improve uniformly or even smoothly with time.
 For example, the accumulated visits will be spread roughly uniformly over the survey footprint at any given time, so the area of sky observed to the nominal depth (specified in table 22 of [[http://ls.st/lpm-17][LPM-17]]) will remain near zero for most of the survey, and then rise rapidly at the end: simply tracking the area covered to the nominal depth as a function of time does not provide a useful indication of progress being made toward achieving this metric.
 Progress toward achieving this requirement can, however, be tracked using simulations: if the remainder of the survey is simulated after each night of observing and the final metrics measured using the final result, the time series can be plotted to indicate how much progress the survey is making in comparison with what is required.
