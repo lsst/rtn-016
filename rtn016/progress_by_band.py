@@ -74,6 +74,7 @@ def plot_progress_by_band():
 
     sql = ""
     slicer = slicers.OneDSlicer(sliceColName="night", bins=vector_bins)
+    #metric = metrics.MeanMetric(col="observationStartMJD")
     metric = metrics.MeanMetric(col="observationStartMJD")
     bundles["mjd"] = metricBundles.MetricBundle(metric, slicer, sql)
     metric_group = metricBundles.MetricBundleGroup(bundles, ops_db)

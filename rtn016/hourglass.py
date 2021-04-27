@@ -11,6 +11,7 @@ logger.info("Starting")
 import os.path
 import copy
 import sys
+import calendar
 from collections import OrderedDict
 
 logger.debug("Loading common modules")
@@ -41,9 +42,10 @@ from lsst.sims.seeingModel import SeeingData, SeeingModel
 from lsst.sims.cloudModel import CloudData
 from lsst.sims.skybrightness_pre import SkyModelPre
 
-
-#from . import plotprep
-import plotprep
+try:
+    import plotprep
+except:
+    from . import plotprep
 
 # constants
 
@@ -51,6 +53,7 @@ SIM_DATABASE_FNAME = "/data/des91.b/data/neilsen/LSST/devel/sim-data/sims_featur
 MONTH = 10
 YEAR = 2024
 MOON_PLOT_FNAME = "figures/moon_hourglass.png"
+HA_PLOT_FNAME = "figures/hour_angle_hourglass.png"
 BLOCK_PLOT_FNAME = "figures/block_hourglass.png"
 DEEP_COORDS = OrderedDict(
     (
@@ -83,9 +86,20 @@ def main():
     with sqlite3.connect(SIM_DATABASE_FNAME) as con:
         visits = pd.read_sql_query("SELECT * FROM SummaryAllProps", con)
 
-    logging.info("Making block plot")
+    logging.info("Making HA plot")
     fig, ax = plt.subplots()
-    plot_hourglass_from_blocks(visits, YEAR, MONTH, ax=ax)
+    plot_hourglass_from_func(
+        lambda d: mean_ha(d, visits),
+        YEAR,
+        MONTH,
+        cmap=plt.get_cmap("coolwarm"),
+        color_limits=(-60, 60),
+    )
+    logging.info("Saving HA plot")
+    fig.savefig(HA_PLOT_FNAME, dpi=600, bbox_inches="tight", pad_inches=0)
+
+    logging.info("Making block plot")
+    fig, ax = plot_year_hourglass_from_blocks(visits, YEAR)
     logging.info("Saving block plot")
     fig.savefig(BLOCK_PLOT_FNAME, dpi=600, bbox_inches="tight", pad_inches=0)
 
@@ -101,6 +115,7 @@ def plot_hourglass_from_func(
     tz="Chile/Continental",
     site=EarthLocation.of_site("Cerro Pachon"),
     max_sun_alt=-8 * u.deg,
+    color_limits=None,
     cmap=plt.get_cmap("viridis"),
     ax=None,
 ):
@@ -122,6 +137,8 @@ def plot_hourglass_from_func(
         The observatory site
     max_sun_alt : `astropy.units.quantity.Quantity`
         The sun altitude to define the edges of the night.
+    color_limits : `tuple`
+        The limits for the color map
     cmap : `matplotlib.colors.Colormap`
         The colormap to use
     ax : `matplotlib.axes._subplots.AxesSubplot`
@@ -170,13 +187,18 @@ def plot_hourglass_from_func(
         night_mjds = night_mjds[night_mask]
 
     values = func(mjds)
+
     if values.max() == values.min():
         colors = cmap(0.5)
     else:
-        colors = cmap((values - values.min()) / (values.max() - values.min()))
+        if color_limits is None:
+            color_limits = (values.min(), values.max())
+        colors = cmap(
+            (values - color_limits[0]) / (color_limits[1] - color_limits[0])
+        )
 
     if fig is not None:
-        norm = mpl.colors.Normalize(vmin=values.min(), vmax=values.max())
+        norm = mpl.colors.Normalize(vmin=color_limits[0], vmax=color_limits[1])
         scalar_mappable = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
         scalar_mappable.set_array([])
         fig.colorbar(scalar_mappable)
@@ -205,6 +227,7 @@ def plot_hourglass_from_blocks(
     max_sun_alt=-8 * u.deg,
     cmap=plt.get_cmap("viridis"),
     legend=True,
+    solar_time=False,
     ax=None,
 ):
     """Return visits centered near a pointing
@@ -226,7 +249,9 @@ def plot_hourglass_from_blocks(
     cmap : `matplotlib.colors.Colormap`
         The colormap to use
     legend : `bool`
-        Show a legend?
+        Show a legend
+    solar_time : `bool`
+        Use solar rather than civil midnight
     ax : `matplotlib.axes._subplots.AxesSubplot`
         The axis on which to plot.
 
@@ -291,13 +316,19 @@ def plot_hourglass_from_blocks(
     utc_times = local_times.tz_convert("UTC")
     mjds = month_blocks.observationStartMJD.values
 
-    (
-        night_mjds,
-        month_blocks["hours_after_midnight"],
-    ) = compute_hours_after_midnight(mjds)
+    if solar_time:
+        (
+            night_mjds,
+            month_blocks["hours_after_midnight"],
+        ) = compute_hours_after_solar_midnight(mjds, site)
+    else:
+        (
+            night_mjds,
+            month_blocks["hours_after_midnight"],
+        ) = compute_hours_after_midnight(mjds)
 
     block_types = month_blocks.reset_index().block.unique()
-    block_cmap = make_block_cmap(block_types, "Set2")
+    block_cmap = make_block_cmap(DEEP_COORDS.keys(), "Set2")
     for block_type in block_types:
         these_blocks = month_blocks.query(f'block=="{block_type}"')
         ax.bar(
@@ -312,8 +343,10 @@ def plot_hourglass_from_blocks(
 
     if legend:
         ax.legend(bbox_to_anchor=(1.01, 1), loc="upper left")
-    ax.set_ylim(ax.get_ylim()[-1], -0.5)
+    maxy = ax.get_ylim()[-1]
+    ax.set_ylim(maxy, -0.5)
     ax.set_title(local_times.month_name()[0])
+    # ax.set_title(calendar.month_name[local_times.month[0]])
     ax.set_yticks(np.arange(1, 32, 7))
     xlim = ax.get_xlim()
 
@@ -322,9 +355,16 @@ def plot_hourglass_from_blocks(
         transit_mjds = compute_coord_transit_mjds(
             np.arange(np.floor(mjds.min()), np.ceil(mjds.max() + 2)), ra, site
         )
-        transit_nights, transit_hams = compute_hours_after_midnight(
-            transit_mjds
-        )
+
+        if solar_time:
+            transit_nights, transit_hams = compute_hours_after_solar_midnight(
+                transit_mjds, site
+            )
+        else:
+            transit_nights, transit_hams = compute_hours_after_midnight(
+                transit_mjds
+            )
+
         ax.plot(
             transit_hams,
             transit_nights - start_mjd + 1,
@@ -334,13 +374,20 @@ def plot_hourglass_from_blocks(
     moon_transit_mjds = compute_moon_transit_mjds(
         np.arange(np.floor(mjds.min()), np.ceil(mjds.max() + 2)), site
     )
-    moon_transit_nights, moon_transit_hams = compute_hours_after_midnight(
-        moon_transit_mjds
-    )
+    if solar_time:
+        (
+            moon_transit_nights,
+            moon_transit_hams,
+        ) = compute_hours_after_solar_midnight(moon_transit_mjds, site)
+    else:
+        moon_transit_nights, moon_transit_hams = compute_hours_after_midnight(
+            moon_transit_mjds
+        )
     # Loop to avoid wrapping
     moon_lines = np.cumsum(
         np.diff(moon_transit_hams, prepend=moon_transit_hams[0]) < 0
     )
+    moon_label = "moon"
     for moon_line in np.unique(moon_lines):
         these_hams = moon_transit_hams[moon_lines == moon_line]
         these_nights = moon_transit_nights[moon_lines == moon_line]
@@ -350,9 +397,60 @@ def plot_hourglass_from_blocks(
             color="yellow",
             linewidth=8,
             alpha=0.5,
+            label=moon_label,
         )
+        moon_label = None
 
     ax.set_xlim(xlim)
+
+
+def plot_year_hourglass_from_blocks(visits, year):
+    """Return visits centered near a pointing
+
+    Parameters
+    ----------
+    visits : `pandas.DataFrame`
+        Table of visits from opsim.
+    year : `int`
+        The year for which to make a plot
+
+    Returns
+    -------
+    fig: `matplotlib.figure.Figure`
+        The matplotlib figure
+    ax : `matplotlib.axes._subplots.AxesSubplot`
+        The axis on which the hourglass is plotted.
+    """
+    scale = 1.5
+    fig, axes = plt.subplots(
+        3,
+        4,
+        sharex=True,
+        sharey=True,
+        figsize=(10 * scale, 7.5 * scale),
+        gridspec_kw={"wspace": 0.025, "hspace": 0},
+    )
+
+    for month, ax in zip(np.arange(1, 13), axes.T.flatten()):
+        plot_hourglass_from_blocks(
+            visits, year, month, solar_time=True, legend=False, ax=ax
+        )
+        ax.set_xlim(-6.5, 6.5)
+        ax.set_ylim(31.5, -0.5)
+        title = ax.get_title()
+        ax.set_title("")
+        ax.set_title(
+            calendar.month_abbr[month], y=1, x=0.005, pad=-15, loc="left"
+        )
+    axes[1, 0].set_ylabel("Day of month")
+    fig.suptitle(year, y=0.9)
+    fig.text(0.5, 0.05, "Hours relative to local solar midnight", ha="center")
+    handles, labels = ax.get_legend_handles_labels()
+    fig.legend(
+        handles, labels, loc="lower right", ncol=2, bbox_to_anchor=(0.9, 0.0)
+    )
+    plt.tight_layout()
+    return fig, axes
 
 
 # classes
@@ -385,6 +483,14 @@ def mean_airmass(mjds, visits):
         "airmass"
     ].mean()
     return airmass
+
+
+def mean_ha(mjds, visits):
+    visits["HA"] = (
+        (visits.observationStartLST - visits.fieldRA) + 180
+    ) % 360 - 180
+    ha = visits.groupby(pd.cut(visits.observationStartMJD, mjds))["HA"].mean()
+    return ha
 
 
 def visit_count(mjds, visits):
@@ -427,8 +533,8 @@ def note_to_block(note):
     elif note_elems[0] == "blob":
         for band in visible_bands:
             if band in note_elems[1]:
-                return "u,g,r"
-        return "IR"
+                return "wide with u, g, or r"
+        return "wide with only IR"
     else:
         assert False
 
@@ -437,7 +543,11 @@ def make_block_cmap(block_types, cmap_name):
     cmap = plt.get_cmap(cmap_name)
     cmap_idx = 0
     block_cmap = OrderedDict(
-        (("IR", "darkred"), ("u,g,r", "darkblue"), ("greedy", "black"))
+        (
+            ("wide with only IR", "darkred"),
+            ("wide with u, g, or r", "darkblue"),
+            ("greedy", "black"),
+        )
     )
     for block_type in block_types:
         if block_type not in block_cmap:
@@ -457,6 +567,23 @@ def compute_hours_after_midnight(mjd, tz="Chile/Continental"):
     hours_after_midnight = (
         local_times.to_julian_date().values - 2400001.5 - night_mjds
     ) * 24
+    return night_mjds, hours_after_midnight
+
+
+def compute_hours_after_solar_midnight(mjd, site, tz="Chile/Continental"):
+    times = Time(mjd, format="mjd", location=site)
+    mean_solar_jd = times.ut1.mjd + site.lon.deg / 360
+    mean_solar_time = Angle(mean_solar_jd * 360, unit=u.deg).wrap_at(
+        180 * u.deg
+    )
+    hours_after_midnight = mean_solar_time.to_value(u.deg) * 24 / 360.0
+    utc_datetimes = pd.to_datetime(
+        mjd + 2400000.5, unit="D", origin="julian"
+    ).tz_localize("UTC")
+    local_times = pd.DatetimeIndex(utc_datetimes).tz_convert(tz)
+    night_mjds = (
+        np.floor(local_times.to_julian_date() - 2400001).astype(int).values
+    )
     return night_mjds, hours_after_midnight
 
 

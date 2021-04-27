@@ -33,13 +33,15 @@ FOOTPRINT_AREA_DEG = 18000
 
 
 def create_metric_by_year_boxplot(
-    this_metric=lsst.sims.maf.metrics.Coaddm5Metric(),
+        this_metric=lsst.sims.maf.metrics.Coaddm5Metric(),
+        bin_width = 0.25,
+        right_y = None
 ):
     """Create a boxplot of limiting magnitude by time (years)."""
 
     mjd_values = OrderedDict()
     mjd_range = _query_mjd_range()
-    for year in range(1, 11):
+    for year in np.arange(bin_width, 10 + bin_width, bin_width):
         mjd_values[year] = np.round(mjd_range.min + 365.242 * year + 0.2) - 0.2
 
     depths_at_times = _compute_metric_by_time(
@@ -51,12 +53,32 @@ def create_metric_by_year_boxplot(
 
     fig, ax = plt.subplots()
 
+    def compute_right_ax(left_ax):
+        y1, y2 = left_ax.get_ylim()
+        right_ax.set_ylim(y1/30, y2/30)
+        right_ax.figure.canvas.draw()
+
+    if right_y is not None:
+        right_ax = ax.twinx()
+        ax.callbacks.connect("ylim_changed", compute_right_ax)
+
     ax.boxplot(
         [d[in_footprint] for d in depths_at_times.values()],
         whis=(5, 95),
         showfliers=False,
     )
     ax.set_xlabel("Year")
+    ax.set_xticks(np.arange(11)/bin_width)
+    ax.set_xticklabels([int(y) for y in ax.get_xticks()*bin_width])
+    if right_y is not None:
+        # This is a t_eff plot, so add the right axis and reference scale
+        right_ax.grid(False)
+        right_ax.set_ylabel(right_y)
+
+        for dmag in (0.2, 0.3):
+            teff_max = 30*825*10**(-0.8*dmag) 
+            ax.plot([0, 10/bin_width], [0, teff_max])
+        
     return fig, ax
 
 
@@ -69,20 +91,23 @@ def main():
             "figures/coaddm5_boxplot.pdf",
             "coadd m5 limiting magnitude",
             lsst.sims.maf.metrics.Coaddm5Metric(),
+            "",
         ),
         (
             "figures/teff_boxplot.pdf",
-            "Accumulated teff",
+            r"Accumulated $t_{\mathrm{eff}}$ (seconds)",
             lsst.sims.maf.metrics.TeffMetric(),
+            r"Accumulated $t_{\mathrm{eff}}$ (nominal visits)",
         ),
         (
             "figures/numvisits_boxplot.pdf",
             "Accumulated visits",
             lsst.sims.maf.metrics.CountMetric(col="observationStartMJD"),
+            "",
         ),
     )
-    for fname, ylabel, metric in figure_params:
-        fig, ax = create_metric_by_year_boxplot(this_metric=metric)
+    for fname, ylabel, metric, right_y in figure_params:
+        fig, ax = create_metric_by_year_boxplot(this_metric=metric, right_y=right_y)
         ax.set_ylabel(ylabel)
         fig.savefig(fname, dpi=600, bbox_inches="tight", pad_inches=0)
 
@@ -118,6 +143,13 @@ def _compute_metric_at_mjd(
         query = f'filter="{band}"'
     else:
         query = f'filter="{band}" and observationStartMjd<{mjd}'
+
+    if mjd is None:
+        query = ""
+    else:
+        query = f'observationStartMjd<{mjd}'
+
+        
     metric_bundles = {
         "this_metric": lsst.sims.maf.metricBundles.MetricBundle(
             this_metric, hpix_slicer, query
