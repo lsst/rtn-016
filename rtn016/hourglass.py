@@ -44,8 +44,10 @@ from lsst.sims.skybrightness_pre import SkyModelPre
 
 try:
     import plotprep
+    import riseset
 except:
     from . import plotprep
+    from . import riseset
 
 # constants
 
@@ -371,9 +373,19 @@ def plot_hourglass_from_blocks(
             color=block_cmap[block_type],
         )
 
-    moon_transit_mjds = compute_moon_transit_mjds(
-        np.arange(np.floor(mjds.min()), np.ceil(mjds.max() + 2)), site
+    # Moon transit
+
+    cal_night_mjds = (
+        np.arange(np.floor(mjds.min()), np.ceil(mjds.max() + 2))
+        - site.lon.deg / 360
     )
+
+    moon_transit_mjds = compute_moon_transit_mjds(
+        cal_night_mjds,
+        site
+        #        np.arange(np.floor(mjds.min()), np.ceil(mjds.max() + 2)), site
+    )
+
     if solar_time:
         (
             moon_transit_nights,
@@ -400,6 +412,59 @@ def plot_hourglass_from_blocks(
             label=moon_label,
         )
         moon_label = None
+
+    # Moon rise and set
+    for direction in ("up", "down"):
+        moon_event_mjds = riseset.riseset_times(
+            cal_night_mjds, direction, alt=0, body="moon"
+        )
+        if solar_time:
+            (
+                moon_event_nights,
+                moon_event_hams,
+            ) = compute_hours_after_solar_midnight(moon_event_mjds, site)
+        else:
+            moon_event_nights, moon_event_hams = compute_hours_after_midnight(
+                moon_event_mjds
+            )
+        # Loop to avoid wrapping
+        moon_lines = np.cumsum(
+            np.diff(moon_event_hams, prepend=moon_event_hams[0]) < 0
+        )
+        for moon_line in np.unique(moon_lines):
+            these_hams = moon_event_hams[moon_lines == moon_line]
+            these_nights = moon_event_nights[moon_lines == moon_line]
+            ax.plot(
+                these_hams,
+                these_nights - start_mjd + 1,
+                color="yellow",
+                linestyle="dotted",
+            )
+
+    # Twilight
+    twilights = {0: "-", -6: "--", -12: "-.", -18: ":"}
+    guess_offset = {'up': 0.2, 'down': -0.2}
+    for direction in ("up", "down"):
+        for alt in twilights:
+            event_mjds = riseset.riseset_times(
+                cal_night_mjds + guess_offset[direction], direction, alt=alt, body="sun"
+            )
+            if solar_time:
+                (
+                    event_nights,
+                    event_hams,
+                ) = compute_hours_after_solar_midnight(event_mjds, site)
+            else:
+                (
+                    event_nights,
+                    event_hams,
+                ) = compute_hours_after_midnight(event_mjds)
+            ax.plot(
+                event_hams,
+                event_nights - start_mjd + 1,
+                color="green",
+                linestyle=twilights[alt],
+            )
 
     ax.set_xlim(xlim)
 
