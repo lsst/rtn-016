@@ -14,7 +14,7 @@ def riseset_times(
     location=EarthLocation.of_site("Cerro Pachon"),
     body="sun",
     tolerance=1e-8,
-    max_iter=5,
+    max_iter=10,
 ):
     """Find morning or evening twilight using Newton's iterative method
 
@@ -109,6 +109,12 @@ def riseset_times(
         )
 
     if not finished:
-        warnings.warn("twilight_times did not converge")
+        unfinished = np.abs(current_alt.deg - alt) < tolerance
+        if np.any(unfinished):
+            try:
+                first_unfinished_mjd = night_mjds[unfinished][0]
+            except IndexError:
+                first_unfinished_mjd = night_mjds[unfinished]
+            warnings.warn(f"twilight_times did not converge, starting with {first_unfinished_mjd}")
 
     return mjds

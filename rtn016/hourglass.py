@@ -345,7 +345,7 @@ def plot_hourglass_from_blocks(
 
     if legend:
         ax.legend(bbox_to_anchor=(1.01, 1), loc="upper left")
-    maxy = ax.get_ylim()[-1]
+    maxy = calendar.monthrange(year, month)[1]+0.5
     ax.set_ylim(maxy, -0.5)
     ax.set_title(local_times.month_name()[0])
     # ax.set_title(calendar.month_name[local_times.month[0]])
@@ -497,6 +497,7 @@ def plot_year_hourglass_from_blocks(visits, year):
     )
 
     for month, ax in zip(np.arange(1, 13), axes.T.flatten()):
+        logging.info("Working on %s", calendar.month_name[month])
         plot_hourglass_from_blocks(
             visits, year, month, solar_time=True, legend=False, ax=ax
         )
@@ -514,7 +515,7 @@ def plot_year_hourglass_from_blocks(visits, year):
     fig.legend(
         handles, labels, loc="lower right", ncol=2, bbox_to_anchor=(0.9, 0.0)
     )
-    plt.tight_layout()
+    # plt.tight_layout()
     return fig, axes
 
 
