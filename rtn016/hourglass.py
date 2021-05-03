@@ -78,17 +78,17 @@ def main():
     plotprep.config_logging()
     plotprep.config_matplotlib()
 
-    logging.info("Making moon plot")
+    logger.info("Making moon plot")
     fig, ax = plt.subplots()
     plot_hourglass_from_func(sun_alt, YEAR, MONTH, ax=ax)
-    logging.info("Saving moon plot")
+    logger.info("Saving moon plot")
     fig.savefig(MOON_PLOT_FNAME, dpi=600, bbox_inches="tight", pad_inches=0)
 
-    logging.info("Reading %s", SIM_DATABASE_FNAME)
+    logger.info("Reading %s", SIM_DATABASE_FNAME)
     with sqlite3.connect(SIM_DATABASE_FNAME) as con:
         visits = pd.read_sql_query("SELECT * FROM SummaryAllProps", con)
 
-    logging.info("Making HA plot")
+    logger.info("Making HA plot")
     fig, ax = plt.subplots()
     plot_hourglass_from_func(
         lambda d: mean_ha(d, visits),
@@ -97,15 +97,15 @@ def main():
         cmap=plt.get_cmap("coolwarm"),
         color_limits=(-60, 60),
     )
-    logging.info("Saving HA plot")
+    logger.info("Saving HA plot")
     fig.savefig(HA_PLOT_FNAME, dpi=600, bbox_inches="tight", pad_inches=0)
 
-    logging.info("Making block plot")
+    logger.info("Making block plot")
     fig, ax = plot_year_hourglass_from_blocks(visits, YEAR)
-    logging.info("Saving block plot")
+    logger.info("Saving block plot")
     fig.savefig(BLOCK_PLOT_FNAME, dpi=600, bbox_inches="tight", pad_inches=0)
 
-    logging.info("GLORIOUS SUCCESS")
+    logger.info("GLORIOUS SUCCESS")
     return 0
 
 
@@ -373,17 +373,263 @@ def plot_hourglass_from_blocks(
             color=block_cmap[block_type],
         )
 
+
+    astron_hourglass(year, month, ax, site, solar_time)
+        
+    ax.set_xlim(xlim)
+
+
+def plot_hourglass_from_visits(
+    visits,
+    column,
+    year,
+    month,
+    color_limits=None,
+    tz="Chile/Continental",
+    site=EarthLocation.of_site("Cerro Pachon"),
+    max_sun_alt=-8 * u.deg,
+    cmap=plt.get_cmap("viridis"),
+    legend=False,
+    solar_time=False,
+    ax=None,
+):
+    """Make an hourglass plot from visits.
+
+    Parameters
+    ----------
+    visits : `pandas.DataFrame`
+        Table of visits from opsim.
+    column : `str`
+        Column name to map to color
+    year : `int`
+        The year for which to make a plot
+    month : `int`
+        The month number (1-12) for which to make a plot
+    tz : `str`
+        The observatory timezone
+    site : `astropy.coordinates.earth.EarthLocation`
+        The observatory site
+    max_sun_alt : `astropy.units.quantity.Quantity`
+        The sun altitude to define the edges of the night.
+    cmap : `matplotlib.colors.Colormap`
+        The colormap to use
+    legend : `bool`
+        Show a legend
+    solar_time : `bool`
+        Use solar rather than civil midnight
+    ax : `matplotlib.axes._subplots.AxesSubplot`
+        The axis on which to plot.
+
+    Returns
+    -------
+    ax : `matplotlib.axes._subplots.AxesSubplot`
+        The axis on which the hourglass is plotted.
+    """
+    block_map = {n: note_to_block(n) for n in visits.note.unique()}
+
+    start_date = pd.Timestamp(year=year, month=month, day=1, hour=12, tz=tz)
+    start_mjd = start_date.to_julian_date() - 2400000.5
+    end_date = start_date + pd.DateOffset(months=1)
+    end_mjd = end_date.to_julian_date() - 2400000.5
+    month_visits = visits.query(
+        f"{start_mjd}<observationStartMJD<{end_mjd}"
+    ).copy()
+    month_visits["night_mjd"] = np.floor(
+        month_visits["observationStartMJD"] + (site.lon.deg / 360) - 0.5
+    ).astype(int)
+    start_night_mjd = np.floor(start_mjd + (site.lon.deg / 360) - 0.5).astype(int)
+    
+    if ax is None:
+        fig, ax = plt.subplots()
+    else:
+        fig = None
+
+    bar_height = 0.8
+
+    # Get MJDs
+    visit_datetimes = pd.to_datetime(
+        month_visits.observationStartMJD.values + 2400000.5,
+        unit="D",
+        origin="julian",
+    ).tz_localize("UTC")
+    local_times = pd.DatetimeIndex(visit_datetimes).tz_convert(
+        "Chile/Continental"
+    )
+
+    utc_times = local_times.tz_convert("UTC")
+    mjds = month_visits.observationStartMJD.values
+
+    if solar_time:
+        (
+            night_mjds,
+            month_visits["hours_after_midnight"],
+        ) = compute_hours_after_solar_midnight(mjds, site)
+    else:
+        (
+            night_mjds,
+            month_visits["hours_after_midnight"],
+        ) = compute_hours_after_midnight(mjds)
+
+    values = month_visits[column]
+
+    if values.max() == values.min():
+        colors = cmap(0.5)
+    else:
+        if color_limits is None:
+            color_limits = (values.min(), values.max())
+        colors = cmap(
+            (values - color_limits[0]) / (color_limits[1] - color_limits[0])
+        )
+
+    if fig is not None:
+        norm = mpl.colors.Normalize(vmin=color_limits[0], vmax=color_limits[1])
+        scalar_mappable = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+        scalar_mappable.set_array([])
+        fig.colorbar(scalar_mappable)
+
+        
+    ax.bar(
+        month_visits['hours_after_midnight'],
+        height=0.8,
+        width=(month_visits['visitExposureTime'].values*u.s).to_value(u.hour),
+        bottom=month_visits["night_mjd"] - start_night_mjd - 0.5,
+        color=colors,
+        align="edge",
+    )
+
+    if legend:
+        ax.legend(bbox_to_anchor=(1.01, 1), loc="upper left")
+    maxy = calendar.monthrange(year, month)[1]+0.5
+    ax.set_ylim(maxy, 0.5)
+    ax.set_title(local_times.month_name()[0])
+    ax.set_yticks(np.arange(1, 32, 7))
+    xlim = ax.get_xlim()
+
+    astron_hourglass(year, month, ax, site, solar_time)
+        
+    ax.set_xlim(xlim)
+
+    
+def plot_year_hourglass_from_blocks(visits, year):
+    """Create hourglass plot of blocks for a year
+
+    Parameters
+    ----------
+    visits : `pandas.DataFrame`
+        Table of visits from opsim.
+    year : `int`
+        The year for which to make a plot
+
+    Returns
+    -------
+    fig: `matplotlib.figure.Figure`
+        The matplotlib figure
+    ax : `matplotlib.axes._subplots.AxesSubplot`
+        The axis on which the hourglass is plotted.
+    """
+    scale = 1.5
+    fig, axes = plt.subplots(
+        3,
+        4,
+        sharex=True,
+        sharey=True,
+        figsize=(10 * scale, 7.5 * scale),
+        gridspec_kw={"wspace": 0.025, "hspace": 0},
+    )
+
+    for month, ax in zip(np.arange(1, 13), axes.T.flatten()):
+        logger.info("Working on %s", calendar.month_name[month])
+        plot_hourglass_from_blocks(
+            visits, year, month, solar_time=True, legend=False, ax=ax
+        )
+        ax.set_xlim(-6.5, 6.5)
+        ax.set_ylim(31.5, -0.5)
+        title = ax.get_title()
+        ax.set_title("")
+        ax.set_title(
+            calendar.month_abbr[month], y=1, x=0.005, pad=-15, loc="left"
+        )
+    axes[1, 0].set_ylabel("Day of month")
+    fig.suptitle(year, y=0.9)
+    fig.text(0.5, 0.05, "Hours relative to local solar midnight", ha="center")
+    handles, labels = ax.get_legend_handles_labels()
+    fig.legend(
+        handles, labels, loc="lower right", ncol=2, bbox_to_anchor=(0.9, 0.0)
+    )
+    # plt.tight_layout()
+    return fig, axes
+
+
+def plot_year_hourglass_from_visits(visits, column, year, *args, **kwargs):
+    """Create hourglass plot of blocks for a year
+
+    Parameters
+    ----------
+    visits : `pandas.DataFrame`
+        Table of visits from opsim.
+    column : `str`
+        Column name to map to color
+    year : `int`
+        The year for which to make a plot
+
+    Returns
+    -------
+    fig: `matplotlib.figure.Figure`
+        The matplotlib figure
+    ax : `matplotlib.axes._subplots.AxesSubplot`
+        The axis on which the hourglass is plotted.
+    """
+    scale = 1.5
+    fig, axes = plt.subplots(
+        3,
+        4,
+        sharex=True,
+        sharey=True,
+        figsize=(10 * scale, 7.5 * scale),
+        gridspec_kw={"wspace": 0.025, "hspace": 0},
+    )
+
+    kwargs = {'solar_time': True,
+              'legend': False,
+              'year': year,
+              'column': column}
+    kwargs.update(kwargs)
+    for month, ax in zip(np.arange(1, 13), axes.T.flatten()):
+        kwargs['month'] = month
+        logger.info("Working on %s", calendar.month_name[month])
+        plot_hourglass_from_visits(visits, *args, ax=ax, **kwargs)
+        ax.set_xlim(-6.5, 6.5)
+        ax.set_ylim(31.5, -0.5)
+        title = ax.get_title()
+        ax.set_title("")
+        ax.set_title(
+            calendar.month_abbr[month], y=1, x=0.005, pad=-15, loc="left"
+        )
+    axes[1, 0].set_ylabel("Day of month")
+    fig.suptitle(year, y=0.9)
+    fig.text(0.5, 0.05, "Hours relative to local solar midnight", ha="center")
+
+    return fig, axes
+
+
+# classes
+
+# internal functions & classes
+
+def astron_hourglass(year, month, ax, site, solar_time):
+    start_date = pd.Timestamp(year=year, month=month, day=1, hour=0)
+    end_date = start_date + pd.DateOffset(months=1, days=1)
+    utc_times = pd.date_range(start_date, end_date, freq='D')
+    mjds = utc_times.to_julian_date() - 2400000.5
+    start_mjd = mjds[0]
+
     # Moon transit
 
-    cal_night_mjds = (
-        np.arange(np.floor(mjds.min()), np.ceil(mjds.max() + 2))
-        - site.lon.deg / 360
-    )
+    cal_night_mjds = (mjds - site.lon.deg / 360)
 
     moon_transit_mjds = compute_moon_transit_mjds(
         cal_night_mjds,
         site
-        #        np.arange(np.floor(mjds.min()), np.ceil(mjds.max() + 2)), site
     )
 
     if solar_time:
@@ -466,63 +712,7 @@ def plot_hourglass_from_blocks(
                 linestyle=twilights[alt],
             )
 
-    ax.set_xlim(xlim)
-
-
-def plot_year_hourglass_from_blocks(visits, year):
-    """Return visits centered near a pointing
-
-    Parameters
-    ----------
-    visits : `pandas.DataFrame`
-        Table of visits from opsim.
-    year : `int`
-        The year for which to make a plot
-
-    Returns
-    -------
-    fig: `matplotlib.figure.Figure`
-        The matplotlib figure
-    ax : `matplotlib.axes._subplots.AxesSubplot`
-        The axis on which the hourglass is plotted.
-    """
-    scale = 1.5
-    fig, axes = plt.subplots(
-        3,
-        4,
-        sharex=True,
-        sharey=True,
-        figsize=(10 * scale, 7.5 * scale),
-        gridspec_kw={"wspace": 0.025, "hspace": 0},
-    )
-
-    for month, ax in zip(np.arange(1, 13), axes.T.flatten()):
-        logging.info("Working on %s", calendar.month_name[month])
-        plot_hourglass_from_blocks(
-            visits, year, month, solar_time=True, legend=False, ax=ax
-        )
-        ax.set_xlim(-6.5, 6.5)
-        ax.set_ylim(31.5, -0.5)
-        title = ax.get_title()
-        ax.set_title("")
-        ax.set_title(
-            calendar.month_abbr[month], y=1, x=0.005, pad=-15, loc="left"
-        )
-    axes[1, 0].set_ylabel("Day of month")
-    fig.suptitle(year, y=0.9)
-    fig.text(0.5, 0.05, "Hours relative to local solar midnight", ha="center")
-    handles, labels = ax.get_legend_handles_labels()
-    fig.legend(
-        handles, labels, loc="lower right", ncol=2, bbox_to_anchor=(0.9, 0.0)
-    )
-    # plt.tight_layout()
-    return fig, axes
-
-
-# classes
-
-# internal functions & classes
-
+    return ax
 
 def sun_alt(mjd, site=EarthLocation.of_site("Cerro Pachon")):
     t = Time(mjd, format="mjd")
