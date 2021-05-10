@@ -116,9 +116,9 @@ Each of these characteristics place requirements on the tools used to generate a
  - Trigger :: A group of astronomers has an inspiration for a project.
  - Success conditions :: A collaboration of astronomers have a good understanding of when their project will become feasable, or to what degree.
  - Main success scenario :: The group might take the following steps:
-   1. The astronomers retrieve plots of $t_{\mbox{eff}}$ vs. calendar date for the filters for relevance from a recent night report or qualterly report.
-   2. They note that in most years, the slope of accumulated $t_{\mbox{eff}}$ followed the baseline, but there was one year during which progress was more shallow, after which it returned to the nominal slope.
-   3. They estimate the date on which the $t_{\mbox{eff}}$ correspends to the magnitudes of interest for each filter, extrapolating from the latest point by eye, using the typical slope. They also use the maximum and minimum slopes (visually obvious from inspection of the plot) to estimate optimistic and pessimistic dates on which the data might have been collected.
+   1. The astronomers retrieve plots of $t_{\mbox{\tiny eff}}$ vs. calendar date for the filters for relevance from a recent night report or qualterly report.
+   2. They note that in most years, the slope of accumulated $t_{\mbox{\tiny eff}}$ followed the baseline, but there was one year during which progress was more shallow, after which it returned to the nominal slope.
+   3. They estimate the date on which the $t_{\mbox{\tiny eff}}$ correspends to the magnitudes of interest for each filter, extrapolating from the latest point by eye, using the typical slope. They also use the maximum and minimum slopes (visually obvious from inspection of the plot) to estimate optimistic and pessimistic dates on which the data might have been collected.
 ** Mini-survey evaluation
  - Purpose :: To estimate the effectiveness of an ongoing target of opportunity program (or other minisurvey), and its impact on the progress made on WFD science goals and other mini-surveys.
  - Context :: Current plans dedicate a fraction of Rubin Observatory observing time to mini-surveys. Estimation of the impact of these surveys on the WFD and other programs will not always be straightforward: visits scheduled for them will often also contribute to WFD goals, so even though the time taken for them may not be fully optimal for WFD science, it is not fully lost to it either. Furthermore, the effectiveness of the mini-survey must itself be evaluated for how well it progressing towards its own scientific goals. If it is making little progress but having a significant impact on WFD progress, the mini-survey observing strategy may need to be modified, or the mini-survey discontinued.
@@ -138,7 +138,7 @@ Examples of such diagrams will include:
  - depth/area plot :: A plot of the total area on the sky covered by the survey as a function of minimum depth will also be a useful representation of progress. Figure [[fig:deptharea]] shows an example of such a plot produced by MAF, for the end of a baseline survey. When used to show survey progress, reference curves from a baseline simulation should be included as well.
  - filter use hourglass plots :: A single graphic that shows the distribution of filter use by time of night and year, and in relation to the moon, can indicate whether dark time is being used efficiently. The [[http://astro-lsst-01.astro.washington.edu:8081/allMetricResults?runId=392#Hourglass][results pages]] give examples of such plots for the ends of simulated surveys. Figure [[fig:filterhourglass]] shows an example of such a plot produced by MAF, for the end of a baseline survey.
  - time use hourglass plots :: A single graphic that summarizes how time has been used by the survey so far will also be of wide interest. A plot will be a similar appearance to that of filter use hourglass plots, and like the plot will indicate time of year on one spatial axis and time of night on the other. Instead of indicating filter, however, this hourglass plot would indicate whether the pointing being observed corresponds to the FWD survey, a mini survey, or (if not science observing) what other activity was taking place. Likely categories to by symbolized by colors include: down time due to equipment failure, down time due to regular maintenance or engineering, time closed due weather, time open and observing but without useful exposures (e.g. due to thick clouds), time spent on observations outside the WFD footprint (possibly separated by mini-survey), time spent on DDFs, and other time in the WFD.
- - data quality hourglass plots :: A plot similar to the filter and time use hourglass plots, but uses the color coding to represent data quality (as measured by $5\sigma$ limiting magnitude relative to nominal depth or $t_{\mbox{eff}}$[fn: $t_{\mbox{eff}} \equiv 10^{\frac{4}{5}(m_{\mbox{lim}} - m_{0})}$, where $m_{0}$ is some reference limiting magnitude. $t_{\mbox{eff}} has two advantages over the more traditional limiting magnitude: first, it scales linearly with time under similar conditions, and second, it is additive under coaddition.]).
+ - data quality hourglass plots :: A plot similar to the filter and time use hourglass plots, but uses the color coding to represent data quality (as measured by $5\sigma$ limiting magnitude relative to nominal depth or $t_{\mbox{\tiny eff}}$[fn:: $t_{\mbox{\tiny eff}} \equiv 10^{\frac{4}{5}(m_{\mbox{\tiny lim}} - m_{0})}$, where $m_{0}$ is some reference limiting magnitude. $t_{\mbox{\tiny eff}}$ has two advantages over the more traditional limiting magnitude: first, it scales linearly with time under similar conditions, and second, it is additive under coaddition.]).
  - transient detection efficiency maps :: Maps of detection efficiency for different classes of variable objects (bright and faint near Earth objects (NEOs), TransNeptunian Objects (TNOs), Tidal Disruption Events (TDEs), fast microlensing events, type 1a supernovae, and others) over the footprint, for the entire survey so far and for the current season.[fn:: Gaps between seasons may be defined to be gaps between visits than include the date on which the sun has the same R.A. as the point on the sky.]
  - deep drilling field (DDF) cadence plots :: A set of plots (one for each DDF) showing the nights on which each DDF has been observed in the current season, and marking the time since it was last observed in each filter. Such plots may also encode the depth of exposures in each band on each night. Figure [[fig:snhistory]] shows a sample cadence plot made using simulated data.
  - DDF transient efficienty plots ::  The detection efficiency and actual numbers of detections for different classes of transients may be plotted as a function of date for each DDF. If these plots were combined with the DDF cadence plots, these plots may also guide an intuition for how gaps of different sizes affect the science for different classes of objects.
@@ -158,7 +158,12 @@ Examples of such diagrams will include:
 #+ATTR_LaTeX: :height 0.4\textheight
 [[file:./figures/baseline_nexp2_v1_7_10yrs_Hourglass_year_0-1_HOUR_Hourglass.pdf]]
 
-#+CAPTION: A mock-up of an LSST DDF cadence plot, made using the version 1.7 baseline. Each subplot shows the cadence of a DDF field. The colors of the bars at each date represent different filters, and the heights of each color in each bar represents the combined effective exposure time, $t_{\mbox{eff}} = 10^{\frac{4}{5} \times (m5_{lim}-m_{0})}$, on that night in that filter, so that limiting magnitude of a coadded exposures from that night in that filter is $m5_{\mbox{lim}} = m_{0} + \frac{5}{4} \log t_{\mbox{eff}}$.  In addition to the features shown in this mock-up, it would also be useful to show the nights of full moon, closest approach of the moon to each field, nights closed due to weather and other downtime, and time since the last set of visits deeper than some reference limiting magnitude.
+#+CAPTION: Example time use hourglass plot, for one year of the 10 year baseline simulation. The greed lines mark the sun's rise and set, and civil, nautical, and astronomical twilight times. Black bars mark times of night when `opsim` is selecting visits using the "greedy" algorithm. Red bars marks times when `opsim` scheduled wide-survey blocks that include only IR filters (i, z, and y), while blue bars mark wide survey blocks with at least some u, g, or r visits. Horizonatal bars of other colors mark different DDF fields. Slanted vertical lines mark transit times for each DDF field: if a DDF field is observed as it transits, the slanted vertical line passes throught the horizontal bar of the same color. The thick yellow line marks the transit time of the moon, and the dotted yellow lines mare the moon's rise and set time. The moon is full when it transits at midnight, so the time the yellow line crosses the horizonal bar for the date indirectly indicates the phase of the moon. Note that the horizonal red bars surround the yellow line, indicating that the scheudules is correctly scheduling filters with the IR filters when the sky is bright.
+#+NAME: fig:filterhourglass
+#+ATTR_LaTeX: :width 1.0\textwidth
+[[file:./figures/block_hourglass.png]]
+
+#+CAPTION: A mock-up of an LSST DDF cadence plot, made using the version 1.7 baseline. Each subplot shows the cadence of a DDF field. The colors of the bars at each date represent different filters, and the heights of each color in each bar represents the combined effective exposure time, $t_{\mbox{\tiny eff}} = 10^{\frac{4}{5} (m5_{\tiny lim}-m_{0})}$, on that night in that filter, so that limiting magnitude of a coadded exposures from that night in that filter is $m5_{\mbox{\tiny lim}} = m_{0} + \frac{5}{4} \log t_{\mbox{\tiny eff}}$.  In addition to the features shown in this mock-up, it would also be useful to show the nights of full moon, closest approach of the moon to each field, nights closed due to weather and other downtime, and time since the last set of visits deeper than some reference limiting magnitude.
 #+NAME: fig:snhistory
 #+ATTR_LaTeX: :height 0.4\textheight
 [[file:./figures/snhistory.pdf]]
@@ -183,18 +188,15 @@ One example of this would be the total number of stars and galaxies detected (PS
    + the dark energy 3x2 Figure of Merit (FoM)
    Supplements and refinements to these metrics are expected.
 
-#+CAPTION: Distributions of the number of visits in the best 18000 square degrees by year, for the the 1.7 2 visit baseline.
-A corresponding figure used for tracking progress should also include indicators of reference discributions, for example by using a shaded background.
+#+CAPTION: Distributions of the number of visits in the best 18000 square degrees by year, for the the 1.7 2 visit baseline. A corresponding figure used for tracking progress should also include indicators of reference discributions, for example by using a shaded background.
 #+NAME: fig:nvboxplot
 [[file:./figures/numvisits_boxplot.pdf]]
 
-#+CAPTION: Numbers of visits in each filter as a function of date, with the moon phase along the bottom.
-A corresponding figure used for tracking purposes should also include indicators of reference discributions, for example by using dashed lines or a shaded background.
+#+CAPTION: Numbers of visits in each filter as a function of date, with the moon phase along the bottom. A corresponding figure used for tracking purposes should also include indicators of reference discributions, for example by using dashed lines or a shaded background.
 #+NAME: fig:progressbyband
 [[file:./figures/progress_by_band.png]]
 
-#+CAPTION: Numbers of visits in each filter as a function of quarter of the sky.
-A corresponding figure used for tracking purposes should also include indicators of reference discributions, for example by using dashed lines or a shaded background.
+#+CAPTION: Numbers of visits in each filter as a function of quarter of the sky. A corresponding figure used for tracking purposes should also include indicators of reference discributions, for example by using dashed lines or a shaded background.
 #+NAME: fig:progressbyquarter
 [[file:./figures/progress_by_quadrant.png]]
 
@@ -233,7 +235,6 @@ Examples of such diagnostics include:
 #+NAME: fig:planisphere
 #+ATTR_LaTeX: :height 0.4\textheight
 [[file:./figures/airmass_map.png]]
-
 
 ** Validation of the site and telescope model
 =opsim= simulations rely on several models for the characteristics of the site and the performance of the instrument.
