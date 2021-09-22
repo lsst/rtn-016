@@ -19,6 +19,7 @@ import pandas as pd
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import colorcet
 import scipy.constants
 import sqlite3
 import yaml
@@ -41,6 +42,7 @@ from lsst.sims.utils import m5_flat_sed
 from lsst.sims.seeingModel import SeeingData, SeeingModel
 from lsst.sims.cloudModel import CloudData
 from lsst.sims.skybrightness_pre import SkyModelPre
+from lsst.sims.maf.metrics.technicalMetrics import TeffMetric
 
 try:
     import plotprep
@@ -53,9 +55,11 @@ except:
 
 SIM_DATABASE_FNAME = "/data/des91.b/data/neilsen/LSST/devel/sim-data/sims_featureScheduler_runs1.7/baseline/baseline_nexp2_v1.7_10yrs.db"
 MONTH = 10
-YEAR = 2024
+YEAR = 2025
 MOON_PLOT_FNAME = "figures/moon_hourglass.png"
+RA_PLOT_FNAME = "figures/ra_hourglass.png"
 HA_PLOT_FNAME = "figures/hour_angle_hourglass.png"
+TEFF_PLOT_FNAME = "figures/teff_hourglass.png"
 BLOCK_PLOT_FNAME = "figures/block_hourglass.png"
 DEEP_COORDS = OrderedDict(
     (
@@ -80,7 +84,7 @@ def main():
 
     logger.info("Making moon plot")
     fig, ax = plt.subplots()
-    plot_hourglass_from_func(sun_alt, YEAR, MONTH, ax=ax)
+    plot_hourglass_from_func(moon_alt, YEAR, MONTH, ax=ax)
     logger.info("Saving moon plot")
     fig.savefig(MOON_PLOT_FNAME, dpi=600, bbox_inches="tight", pad_inches=0)
 
@@ -88,18 +92,51 @@ def main():
     with sqlite3.connect(SIM_DATABASE_FNAME) as con:
         visits = pd.read_sql_query("SELECT * FROM SummaryAllProps", con)
 
-    logger.info("Making HA plot")
-    fig, ax = plt.subplots()
-    plot_hourglass_from_func(
-        lambda d: mean_ha(d, visits),
+    logger.info("Making RA plot")
+    transit_ras = np.arange(0, 360, 90)
+    ra_styles = ['solid', 'dotted', 'dashed', 'dashdot']
+    transit_plot_kwargs = [{'color': 'red', 'ls': ls} for ra, ls in zip(transit_ras, ra_styles)]
+    fig, ax = plot_year_hourglass_from_visits(
+        visits,
+        "fieldRA",
         YEAR,
-        MONTH,
-        cmap=plt.get_cmap("coolwarm"),
+        color_limits=(0, 360),
+        cmap=colorcet.cm.colorwheel,
+        colorbar_ticks=np.arange(0, 360+45, 45),
+#        transit_ras=transit_ras,
+#        transit_plot_kwargs=transit_plot_kwargs
+    )
+    logger.info("Saving RA plot")
+    fig.savefig(RA_PLOT_FNAME, dpi=600, bbox_inches="tight", pad_inches=0)
+
+    logger.info("Making HA plot")
+    visits["HA"] = (
+        360 + visits.observationStartLST - visits.fieldRA + 180
+    ) % 360 - 180
+    fig, ax = plot_year_hourglass_from_visits(
+        visits,
+        "HA",
+        YEAR,
         color_limits=(-60, 60),
+        cmap=colorcet.cm.bwy,
     )
     logger.info("Saving HA plot")
     fig.savefig(HA_PLOT_FNAME, dpi=600, bbox_inches="tight", pad_inches=0)
 
+
+    logger.info("Making teff plot")
+    teff_base = visits['filter'].map(TeffMetric().depth)
+    visits["teff"] = (10.0**(0.8*(visits.fiveSigmaDepth - teff_base)))
+    fig, ax = plot_year_hourglass_from_visits(
+        visits,
+        "teff",
+        YEAR,
+        color_limits=(0, 1.5)
+    )
+    logger.info("Saving teff plot")
+    fig.savefig(TEFF_PLOT_FNAME, dpi=600, bbox_inches="tight", pad_inches=0)
+
+    
     logger.info("Making block plot")
     fig, ax = plot_year_hourglass_from_blocks(visits, YEAR)
     logger.info("Saving block plot")
@@ -199,17 +236,17 @@ def plot_hourglass_from_func(
             (values - color_limits[0]) / (color_limits[1] - color_limits[0])
         )
 
+    norm = mpl.colors.Normalize(vmin=color_limits[0], vmax=color_limits[1])
+    scalar_mappable = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+    scalar_mappable.set_array([])
     if fig is not None:
-        norm = mpl.colors.Normalize(vmin=color_limits[0], vmax=color_limits[1])
-        scalar_mappable = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
-        scalar_mappable.set_array([])
         fig.colorbar(scalar_mappable)
 
     ax.bar(
         hours_after_midnight,
         height=0.8,
         width=time_width,
-        bottom=night_mjds - np.min(night_mjds) + 0.5,
+        bottom=night_mjds - np.min(night_mjds) - 0.4,
         color=colors,
         align="edge",
     )
@@ -217,7 +254,7 @@ def plot_hourglass_from_func(
     ax.set_title(local_times.month_name()[0])
     ax.set_yticks(np.arange(1, 32, 7))
 
-    return ax
+    return ax, scalar_mappable
 
 
 def plot_hourglass_from_blocks(
@@ -318,64 +355,49 @@ def plot_hourglass_from_blocks(
     utc_times = local_times.tz_convert("UTC")
     mjds = month_blocks.observationStartMJD.values
 
-    if solar_time:
-        (
-            night_mjds,
-            month_blocks["hours_after_midnight"],
-        ) = compute_hours_after_solar_midnight(mjds, site)
-    else:
-        (
-            night_mjds,
-            month_blocks["hours_after_midnight"],
-        ) = compute_hours_after_midnight(mjds)
+    if len(month_visits)>0:
+        if solar_time:
+            (
+                night_mjds,
+                month_blocks["hours_after_midnight"],
+            ) = compute_hours_after_solar_midnight(mjds, site)
+        else:
+            (
+                night_mjds,
+                month_blocks["hours_after_midnight"],
+            ) = compute_hours_after_midnight(mjds)
 
-    block_types = month_blocks.reset_index().block.unique()
-    block_cmap = make_block_cmap(DEEP_COORDS.keys(), "Set2")
-    for block_type in block_types:
-        these_blocks = month_blocks.query(f'block=="{block_type}"')
-        ax.bar(
-            these_blocks["hours_after_midnight"],
-            height=bar_height,
-            width=(these_blocks["duration"].values * u.day).to_value(u.hour),
-            bottom=these_blocks.reset_index()["night_mjd"] - start_mjd + 1,
-            color=block_cmap[block_type],
-            align="edge",
-            label=block_type,
-        )
+        block_types = month_blocks.reset_index().block.unique()
+        block_cmap = make_block_cmap(DEEP_COORDS.keys(), "tab10")
+        for block_type in block_types:
+            these_blocks = month_blocks.query(f'block=="{block_type}"')
+            ax.bar(
+                these_blocks["hours_after_midnight"],
+                height=bar_height,
+                width=(these_blocks["duration"].values * u.day).to_value(u.hour),
+                bottom=these_blocks.reset_index()["night_mjd"] - start_mjd + 1,
+                color=block_cmap[block_type],
+                align="edge",
+                label=block_type,
+            )
 
     if legend:
         ax.legend(bbox_to_anchor=(1.01, 1), loc="upper left")
-    maxy = calendar.monthrange(year, month)[1]+0.5
-    ax.set_ylim(maxy, -0.5)
-    ax.set_title(local_times.month_name()[0])
-    # ax.set_title(calendar.month_name[local_times.month[0]])
+    maxy = calendar.monthrange(year, month)[1] + 0.5
+    ax.set_ylim(maxy, 0.5)
+    # ax.set_title(local_times.month_name()[0])
+    ax.set_title(calendar.month_name[month])
     ax.set_yticks(np.arange(1, 32, 7))
     xlim = ax.get_xlim()
 
-    for block_type in set(DEEP_COORDS).intersection(block_types):
-        ra = DEEP_COORDS[block_type].ra.deg
-        transit_mjds = compute_coord_transit_mjds(
-            np.arange(np.floor(mjds.min()), np.ceil(mjds.max() + 2)), ra, site
-        )
-
-        if solar_time:
-            transit_nights, transit_hams = compute_hours_after_solar_midnight(
-                transit_mjds, site
-            )
-        else:
-            transit_nights, transit_hams = compute_hours_after_midnight(
-                transit_mjds
-            )
-
-        ax.plot(
-            transit_hams,
-            transit_nights - start_mjd + 1,
-            color=block_cmap[block_type],
-        )
-
+    if len(month_visits)>0:
+        for block_type in set(DEEP_COORDS).intersection(block_types):
+            ra = DEEP_COORDS[block_type].ra.deg
+            plot_ra_transit_on_hourglass(
+                ra, year, month, ax, site, solar_time, color=block_cmap[block_type])
 
     astron_hourglass(year, month, ax, site, solar_time)
-        
+
     ax.set_xlim(xlim)
 
 
@@ -385,12 +407,16 @@ def plot_hourglass_from_visits(
     year,
     month,
     color_limits=None,
+    colorbar_ticks=None,
     tz="Chile/Continental",
     site=EarthLocation.of_site("Cerro Pachon"),
     max_sun_alt=-8 * u.deg,
     cmap=plt.get_cmap("viridis"),
     legend=False,
     solar_time=False,
+    color_slew=False,
+    transit_ras=[],
+    transit_plot_kwargs=[],
     ax=None,
 ):
     """Make an hourglass plot from visits.
@@ -417,6 +443,12 @@ def plot_hourglass_from_visits(
         Show a legend
     solar_time : `bool`
         Use solar rather than civil midnight
+    color_slew : `bool`
+        Color the slew time with the same color as the rest of the exposure
+    transit_ras : `list(fload)`
+        A list of RAs (in degrees) whose transit lines to draw
+    transit_plot_kwargs : `list(dict)`
+        A list of plot paramateres for the transit lines 
     ax : `matplotlib.axes._subplots.AxesSubplot`
         The axis on which to plot.
 
@@ -437,8 +469,10 @@ def plot_hourglass_from_visits(
     month_visits["night_mjd"] = np.floor(
         month_visits["observationStartMJD"] + (site.lon.deg / 360) - 0.5
     ).astype(int)
-    start_night_mjd = np.floor(start_mjd + (site.lon.deg / 360) - 0.5).astype(int)
-    
+    start_night_mjd = np.floor(start_mjd + (site.lon.deg / 360) - 0.5).astype(
+        int
+    )
+
     if ax is None:
         fig, ax = plt.subplots()
     else:
@@ -458,6 +492,8 @@ def plot_hourglass_from_visits(
 
     utc_times = local_times.tz_convert("UTC")
     mjds = month_visits.observationStartMJD.values
+    if color_slew:
+        mjds = mjds - (month_visits["slewTime"].values * u.s).to_value(u.day)
 
     if solar_time:
         (
@@ -481,35 +517,57 @@ def plot_hourglass_from_visits(
             (values - color_limits[0]) / (color_limits[1] - color_limits[0])
         )
 
+    norm = mpl.colors.Normalize(vmin=color_limits[0], vmax=color_limits[1])
+    scalar_mappable = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+    scalar_mappable.set_array([])
     if fig is not None:
-        norm = mpl.colors.Normalize(vmin=color_limits[0], vmax=color_limits[1])
-        scalar_mappable = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
-        scalar_mappable.set_array([])
-        fig.colorbar(scalar_mappable)
+        fig.colorbar(scalar_mappable, fraction=0.05, ticks=colorbar_ticks)
 
-        
+    if color_slew:
+        bar_width = (
+            (
+                month_visits["visitExposureTime"].values
+                + month_visits["slewTime"].values
+            )
+            * u.s
+        ).to_value(u.hour)
+    else:
+        bar_width = (month_visits["visitExposureTime"].values * u.s).to_value(
+            u.hour
+        )
     ax.bar(
-        month_visits['hours_after_midnight'],
+        month_visits["hours_after_midnight"],
         height=0.8,
-        width=(month_visits['visitExposureTime'].values*u.s).to_value(u.hour),
-        bottom=month_visits["night_mjd"] - start_night_mjd - 0.5,
+        width=(month_visits["visitExposureTime"].values * u.s).to_value(
+            u.hour
+        ),
+        bottom=month_visits["night_mjd"] - start_night_mjd - 0.4,
         color=colors,
         align="edge",
     )
 
     if legend:
         ax.legend(bbox_to_anchor=(1.01, 1), loc="upper left")
-    maxy = calendar.monthrange(year, month)[1]+0.5
+    maxy = calendar.monthrange(year, month)[1] + 0.5
     ax.set_ylim(maxy, 0.5)
     ax.set_title(local_times.month_name()[0])
     ax.set_yticks(np.arange(1, 32, 7))
     xlim = ax.get_xlim()
 
+    if len(transit_plot_kwargs) == 0:
+        transit_plot_kwargs = [{}]*len(transit_ras)
+
+    for ra, plot_kwargs in zip(transit_ras, transit_plot_kwargs):
+        plot_ra_transit_on_hourglass(
+            ra, year, month, ax, site, solar_time, **plot_kwargs)
+
     astron_hourglass(year, month, ax, site, solar_time)
-        
+
     ax.set_xlim(xlim)
 
-    
+    return ax, scalar_mappable
+
+
 def plot_year_hourglass_from_blocks(visits, year):
     """Create hourglass plot of blocks for a year
 
@@ -538,7 +596,7 @@ def plot_year_hourglass_from_blocks(visits, year):
     )
 
     for month, ax in zip(np.arange(1, 13), axes.T.flatten()):
-        logger.info("Working on %s", calendar.month_name[month])
+        logger.info("Working on %s, %d", calendar.month_name[month], year)
         plot_hourglass_from_blocks(
             visits, year, month, solar_time=True, legend=False, ax=ax
         )
@@ -560,7 +618,7 @@ def plot_year_hourglass_from_blocks(visits, year):
     return fig, axes
 
 
-def plot_year_hourglass_from_visits(visits, column, year, *args, **kwargs):
+def plot_year_hourglass_from_visits(visits, column, year, colorbar_ticks=None, *args, **kwargs):
     """Create hourglass plot of blocks for a year
 
     Parameters
@@ -571,6 +629,8 @@ def plot_year_hourglass_from_visits(visits, column, year, *args, **kwargs):
         Column name to map to color
     year : `int`
         The year for which to make a plot
+    colorbar_ticks : `list`
+        List of tick locations for the colorbar
 
     Returns
     -------
@@ -589,15 +649,19 @@ def plot_year_hourglass_from_visits(visits, column, year, *args, **kwargs):
         gridspec_kw={"wspace": 0.025, "hspace": 0},
     )
 
-    kwargs = {'solar_time': True,
-              'legend': False,
-              'year': year,
-              'column': column}
-    kwargs.update(kwargs)
+    plot_hourglass_kwargs = {
+        "solar_time": True,
+        "legend": False,
+        "year": year,
+        "column": column,
+    }
+    plot_hourglass_kwargs.update(kwargs)
     for month, ax in zip(np.arange(1, 13), axes.T.flatten()):
-        kwargs['month'] = month
+        plot_hourglass_kwargs["month"] = month
         logger.info("Working on %s", calendar.month_name[month])
-        plot_hourglass_from_visits(visits, *args, ax=ax, **kwargs)
+        ax, color_map = plot_hourglass_from_visits(
+            visits, *args, ax=ax, **plot_hourglass_kwargs
+        )
         ax.set_xlim(-6.5, 6.5)
         ax.set_ylim(31.5, -0.5)
         title = ax.get_title()
@@ -609,6 +673,8 @@ def plot_year_hourglass_from_visits(visits, column, year, *args, **kwargs):
     fig.suptitle(year, y=0.9)
     fig.text(0.5, 0.05, "Hours relative to local solar midnight", ha="center")
 
+    fig.colorbar(color_map, ax=axes.ravel().tolist(), fraction=0.05, ticks=colorbar_ticks)
+
     return fig, axes
 
 
@@ -616,21 +682,19 @@ def plot_year_hourglass_from_visits(visits, column, year, *args, **kwargs):
 
 # internal functions & classes
 
+
 def astron_hourglass(year, month, ax, site, solar_time):
     start_date = pd.Timestamp(year=year, month=month, day=1, hour=0)
     end_date = start_date + pd.DateOffset(months=1, days=1)
-    utc_times = pd.date_range(start_date, end_date, freq='D')
+    utc_times = pd.date_range(start_date, end_date, freq="D")
     mjds = utc_times.to_julian_date() - 2400000.5
     start_mjd = mjds[0]
 
     # Moon transit
 
-    cal_night_mjds = (mjds - site.lon.deg / 360)
+    cal_night_mjds = mjds - site.lon.deg / 360
 
-    moon_transit_mjds = compute_moon_transit_mjds(
-        cal_night_mjds,
-        site
-    )
+    moon_transit_mjds = compute_moon_transit_mjds(cal_night_mjds, site)
 
     if solar_time:
         (
@@ -689,11 +753,52 @@ def astron_hourglass(year, month, ax, site, solar_time):
 
     # Twilight
     twilights = {0: "-", -6: "--", -12: "-.", -18: ":"}
-    guess_offset = {'up': 0.2, 'down': -0.2}
+    guess_offset = {"up": 0.2, "down": -0.2}
+    twilight_shade = {0: "0.7", -6: "0.6", -12: "0.4", -18: "black"}
+
+    for alt in twilight_shade:
+        pm_event_mjds = riseset.riseset_times(
+            cal_night_mjds + guess_offset["down"], "down", alt=alt, body="sun"
+        )
+        am_event_mjds = riseset.riseset_times(
+            cal_night_mjds + guess_offset["up"], "up", alt=alt, body="sun"
+        )
+        if solar_time:
+            (
+                pm_event_nights,
+                pm_event_hams,
+            ) = compute_hours_after_solar_midnight(pm_event_mjds, site)
+            (
+                am_event_nights,
+                am_event_hams,
+            ) = compute_hours_after_solar_midnight(am_event_mjds, site)
+        else:
+            (
+                pm_event_nights,
+                pm_event_hams,
+            ) = compute_hours_after_midnight(pm_event_mjds)
+            (
+                am_event_nights,
+                am_event_hams,
+            ) = compute_hours_after_midnight(am_event_mjds)
+        assert np.array_equal(am_event_nights, pm_event_nights)
+        ax.fill_betweenx(
+            am_event_nights - start_mjd + 1,
+            pm_event_hams,
+            am_event_hams,
+            color=twilight_shade[alt],
+            zorder=-10,
+        )
+
+    return ax
+
     for direction in ("up", "down"):
         for alt in twilights:
             event_mjds = riseset.riseset_times(
-                cal_night_mjds + guess_offset[direction], direction, alt=alt, body="sun"
+                cal_night_mjds + guess_offset[direction],
+                direction,
+                alt=alt,
+                body="sun",
             )
             if solar_time:
                 (
@@ -713,6 +818,7 @@ def astron_hourglass(year, month, ax, site, solar_time):
             )
 
     return ax
+
 
 def sun_alt(mjd, site=EarthLocation.of_site("Cerro Pachon")):
     t = Time(mjd, format="mjd")
@@ -797,18 +903,30 @@ def note_to_block(note):
 
 def make_block_cmap(block_types, cmap_name):
     cmap = plt.get_cmap(cmap_name)
-    cmap_idx = 0
-    block_cmap = OrderedDict(
+    available_idxs = list(range(cmap.N))
+    available_idxs.remove(7)
+    # Gray, confusing against background
+
+    block_cmap_idx = OrderedDict(
         (
-            ("wide with only IR", "darkred"),
-            ("wide with u, g, or r", "darkblue"),
-            ("greedy", "black"),
+            ("wide with only IR", 3),
+            ("wide with u, g, or r", 0),
+            ("greedy", 1),
         )
     )
+
+    block_cmap = OrderedDict()
+
+    for block, cmap_idx in block_cmap_idx.items():
+        available_idxs.remove(cmap_idx)
+        block_cmap[block] = cmap(cmap_idx)
+
     for block_type in block_types:
         if block_type not in block_cmap:
+            cmap_idx = available_idxs[0]
             block_cmap[block_type] = cmap(cmap_idx)
-            cmap_idx += 1
+            available_idxs.remove(cmap_idx)
+
     return block_cmap
 
 
@@ -841,6 +959,32 @@ def compute_hours_after_solar_midnight(mjd, site, tz="Chile/Continental"):
         np.floor(local_times.to_julian_date() - 2400001).astype(int).values
     )
     return night_mjds, hours_after_midnight
+
+
+def plot_ra_transit_on_hourglass(ra, year, month, ax, site, solar_time, **kwargs):
+    start_date = pd.Timestamp(year=year, month=month, day=1, hour=0)
+    end_date = start_date + pd.DateOffset(months=1, days=1)
+    utc_times = pd.date_range(start_date, end_date, freq="D")
+    night_mjds = utc_times.to_julian_date() - 2400000.5
+    start_mjd = night_mjds[0]
+
+    transit_mjds = compute_coord_transit_mjds(night_mjds, ra, site)
+
+    if solar_time:
+        transit_nights, transit_hams = compute_hours_after_solar_midnight(
+            transit_mjds, site
+        )
+    else:
+        transit_nights, transit_hams = compute_hours_after_midnight(
+            transit_mjds
+        )
+
+    ax.plot(
+        transit_hams,
+        transit_nights - start_mjd + 1,
+        **kwargs
+    )
+
 
 
 if __name__ == "__main__":
