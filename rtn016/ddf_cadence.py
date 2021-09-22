@@ -11,9 +11,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import scipy.constants
 
-#from . import plotprep
-import plotprep
 
+try:
+    import plotprep
+except:
+    from . import plotprep
+    
 # constants
 
 SIM_DATABASE_FNAME = "/data/des91.b/data/neilsen/LSST/devel/sim-data/sims_featureScheduler_runs1.7/baseline/baseline_nexp2_v1.7_10yrs.db"

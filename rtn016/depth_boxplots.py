@@ -18,8 +18,11 @@ import lsst.sims.maf.stackers
 import lsst.sims.maf.plots
 import lsst.sims.maf.metricBundles
 
-import plotprep
-
+try:
+    import plotprep
+except:
+    from . import plotprep
+    
 # constants
 
 SIM_DATABASE_FNAME = "/data/des91.b/data/neilsen/LSST/devel/sim-data/sims_featureScheduler_runs1.7/baseline/baseline_nexp2_v1.7_10yrs.db"
@@ -91,7 +94,7 @@ def main():
             "figures/coaddm5_boxplot.pdf",
             "coadd m5 limiting magnitude",
             lsst.sims.maf.metrics.Coaddm5Metric(),
-            "",
+            None,
         ),
         (
             "figures/teff_boxplot.pdf",
@@ -103,9 +106,10 @@ def main():
             "figures/numvisits_boxplot.pdf",
             "Accumulated visits",
             lsst.sims.maf.metrics.CountMetric(col="observationStartMJD"),
-            "",
+            None,
         ),
     )
+
     for fname, ylabel, metric, right_y in figure_params:
         fig, ax = create_metric_by_year_boxplot(this_metric=metric, right_y=right_y)
         ax.set_ylabel(ylabel)
