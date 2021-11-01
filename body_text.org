@@ -586,13 +586,13 @@ different levels of knowledge, experience and skills.
 Good candidates for presentation to the public are movies of numbers of exposures generated, and plots numbers of galaxies (or other objects) detected as a function of time.
 
 *** [[https://ls.st/lse-29][LSE-29]]/LSR-REQ-0116 EPO Fully Integrated                       :noexport:
-* Workflows
-#+CAPTION: A data flow diagram for producing an LSST observing progress report. 
+* Workflows and infrastructure
+#+CAPTION: A data flow diagram for producing an LSST observing progress report. Lighter gray elements represent those that need not be repeated every night. Heavier boxes indicate input to the workflow.
 #+NAME: fig:reportdfd
 #+ATTR_LaTeX: :height 0.9\textheight
 [[file:./figures/reportdfd.png]]
 
-The workflow for producing reports will have several steps, each reading some sets of data, and producting others. Figure~[[fig:reportdfd]] shows the data flow for the production of a progress report, with the different processes labeled by simple letters:
+The workflow for producing reports will have several steps, each reading some sets of data, and producting others. Figure~[[fig:reportdfd]] shows the data flow for the production of a progress report:
 
  - data collection :: Progress reports require databases of visits, including observing parameters and basic metadata on each visit. Examples of such metadata will include the depth and sky brightness. This process collects the required data from the Engineering and Facilities Database (EFD) and the output of data management (probably from an instance of a DM butler) and produces a visits table, probably similar to the sqlite databases currently produced by =opsim=.
  - future visit simulation :: In general, it will not be sufficient to compute the instantaneous values of metrics; reports will need to provide readers with an indictation of how the achieved progress is likely to affect the expected metrics both in the short and long term (after the end of the current year, and the end of the survey, for example). The operations simulator will therefore need to be executed with a starting state matching the current state of the survey, and proceeding until the end of the survey. Running a suite of such simulations sampling different possible future conditions, such that they can indicate what might happen under good, median, and poor weather conditions. Therefore, process B is not filled by =opsim= alone alone, but rather will require a driver for =opsim= that prepares input for a suite of =opsim= processes, executes them, collects the results, records the provenance of the results, and archives them for future steps.
@@ -603,30 +603,51 @@ The workflow for producing reports will have several steps, each reading some se
  - report compilation :: Once the plots are produced, they need to be compiled into a digestable form. In some cases, this process will be human labor. In other cases (e.g. reports supporting the pre-night review, and the night summaries), automated reports will be more suitable.
 
 This list of processes indicates some elements of computing infrastructure that will be needed:
-
  - opsim :: =opsim= will be needed to create visits sets both for the baseline, and ranges of possible survey futures.
  - MAF :: =MAF= itself will be needed to calculate and plot metrics. In addition to the metrics and plots currently available, several additional ones will need to be developed.
  - data collector :: An application to collect data from the EFD and DM butler and create a visit database that can be used by =opsim=.
  - workflow tool :: A driver to run suites of =opsim= simulations and =MAF= processes, record relevant metadata, and archive the results. This might be orchestrated by a general workflow system, or may be something as simple as a script run by a cron job.
- - simulation archive :: An archive to store the visit databases, and store metadata on each. Metadata will include things like the date at which collected visits end and simulated ones begin, weather (seeing and cloud) databases used, =opsim= version used, and instrument parameters used.
- - metric archive :: An archive to store the MAF results, and store metadata on each. Metadata will need to include the visit database used, subsets of data within that simulation database (particularly ranges of dates), and versions of MAF used. 
+ - simulation and metric archive :: An archive to store the summary metrics, visit set metadat, and sometimes a subset of the visit databases and metrics themselves. Metadata will include things like the date at which collected visits end and simulated ones begin, weather (seeing and cloud) databases used, =opsim= version used, and instrument parameters used.
  - weather data :: A suite of weather data for =opsim=, representing the full range of possible weather conditions for each date.
  - dashboards and report generation :: Mechanisms for presenting the generated plots will be required. For sets that should be reviewed daily, diagnostics  should be presented in pre-made sets according to their usage, without a need for the user to select or customize plots each time. For example, plots needed for the night plan and night report should be presented web pages or report templates without the need for human interaction or customization. For longer written reports, humans will compile the reports themselves, but these humans will need an interface to the metrics and plots they may wish to use.
 
-* Available infrastructure
+The Rubin Observatory project is already producing and maintaining a variety of tools that can fill some of these needs. These include:
+
  - opsim :: The existing scheduler software product already supports creation of simulations, and such capabilities will be maintained throughout the life of the survey.
+   + visit databases :: =opsim= produces a database of visits, include an assortment of metadata. This metadata includes values derived from a variety of models (sky and instrument) and simulated weather (cloud and seeing) data.
  - The Metrics Analysis Framework (MAF) :: MAF provides a collection of tools in python for the analysis of scheduler simulation results, and the science collaborations have developed (and are continuing to develop) metric calculation tools within this framework. 
+   + results databases :: Computation of metrics using MAF results in entries an a (possibly new) results database and associated directory tree. The database includes summary metrics and metadata on slices, plots, and full metric values; while the directory tree contains files with the plots and full metric values themselves. MAF may either create a separate database and directory for each batch of metrics computed on each run, or combine many runs and batches into a single database and directory tree. The usual current mode of opetation is the former: one database and directory per combination of run and metric batch.
+   + Summary metrics table :: MAF tools can currently produce tables of summary metrics. These tables contain summary metrics for the standard MAF batches run on opsim runs. 
+   + trackingDb :: MAF tools can currently produces a database of basic metadata describing =opsim= runs and exections of MAF batches on them. 
  - Engineering and Facilities Database (EFD) :: Observatory telemetry will be stored in EFDs. There are two EFDs under development: the summit EFD ([[https://ls.st/LTS-210][LTS-210]]) and the Data Management (DM) EFD ([[https://sqr-029.lsst.io/][SQR-029]]).  Data associated with validation of the site and telescope model used by the scheduler (section [[*Validation of the site and telescope model]]) will require access to one of these databases.
  - Data Management Butler :: The butler is the archiving and access tool that will be used by Data Management to store the results of processing. Calculation of several scheduler diagnostics will require access to this data. Examples include limiting magnitudes and other data quality measures and numbers of different types of objects detected (e.g. stars, galaxies). The butler appears to be flexible enough to support storage of scheduler-related data sets, including the results of simulations themselves, but it is unclear that there are any advantages of storing such data in the butler rather than a simple file system.
- - Science Quality Analysis Harness (SQuaSH) :: SQuaSH ([[https://sqr-009.lsst.io/][SQR-009]]) provides infrastructure for monitoring data management pipeline tasks. This infrastructure has many features in common with what is required for scheduling and survey progress related tasks. Elements of the SQuaSH infrastructure include (shown in the architecture diagram in SQR-009):
+ - Science Quality Analysis Harness (SQuaSH) :: SQuaSH ([[https://sqr-009.lsst.io/][SQR-009]]) provides infrastructure for monitoring data management pipeline tasks. This infrastructure has many features in common with what is required for scheduling and survey progress related tasks, but also significant differences. Elements of the SQuaSH infrastructure include (shown in the architecture diagram in SQR-009):
    + execution environment :: SQuaSH includes a verification job execution environment.
    + time series database :: SQuaSH seems to be built around the assumption that each metric is best examined as a time series of scalar values. This is true for many progress and scheduling related metrics, but there are important exceptions, such as depth maps or distributions. 
    + metric visualization :: SQuaSH includes an instance of [[https://docs.influxdata.com/chronograf/v1.8/][chronograph]], a time-series visualization tool designed to work with the selected implementation of the time series database, [[https://www.influxdata.com/products/influxdb/][InfluxDB]]. It seems likely that this tool would be useful for visualization of many of our time series metrics, but may lack the specialized visualizations present in existing tools like MAF, such as hourglass plots.
-    + Nublado :: Nublado is a JupyterHub and JupyterLab environment that constitutes the Rubin Observatory Science Platform Notebook Aspect. 
+   + Nublado :: Nublado is a JupyterHub and JupyterLab environment that constitutes the Rubin Observatory Science Platform Notebook Aspect. 
    + nbreport :: SQuaRE includes infrastructure for running jupyter notebooks as templates for periodic reports, and uses the night report as a reference example ([[https://sqr-026.lsst.io/][SQR-026]]). This system might be suitable for generation of the night plan, and as reports that can serve as first drafts for longer, less frequent reports.
  - faro :: Faro is a set of DM pipeline tasks that calculate scalar metrics from catalogs, and sends the results to SQuaSH's InfluxDB time series database to track how they change over time. The gen3 task execution framework executes these tasks, and stores the computed metrics in the gen3 butler.
  - LOVE :: The LSST Operations and Visualization Environment is the operator user interface for the observatory control room, including a front end and communication of telemetry, events (including "observing log events"), commands, and command acknowledgements.
  - Observatory Logging Ecosystem :: [[https://ls.st/lse-490][LSE-490]] and [[https://dmtn-173.lsst.io/][DMTN-173]] describe the observatory logging ecosystem. The "ecosystem" includes several elements listed above, and DMTN-173 lists several "missing components" as well, including "templates for generated reports."
+
+=opsim= and MAF will comprise the basic computational elements of the workflow, simulating the future visits and computing the metrics and summary values. Additional plots will need to be developed for MAF. The database MAF currently produces are designed for analysis of simulations performed for stategy analysis and selection, and these will need to be extended or supplemented for progress monitoring use cases. In particular, a database that incorporates elements of all three of the current databases (results, summary metrics, and tracking) into a single, unified database will be needed.
+
+The role that other elements of existing or currently planned Rubin Observatory infrastructure might play in the workflow is less clear. Data management's butler infrastructure and talk execution framework /could/ be used to orchestrate the workflow itself, starting the =opsim= and =MAF= jobs as necessary, and storing and retrieving the required and created data using the butler. Although /something/ will be needed for this task, use of the DM infrastructure may be overly complex: a simple cron job supported by a modest database and filesystem may be adequate for the task at hand. 
+
+Some of the metrics to be monitored will be time series, and could be naturally stored and visualized by SQuaSH's InfluxDB time series database and visualized using the corresponding cronograph tool. However, not all metrics in need of monitoring are time series, and this solution seems unlikely to be a viable alternative to creation of plots using MAF. It might, however, be useful to provide a mechanism for storing some subset of MAF's output in the SQuaSH InfluxDB, and exploring plots of it using chronograph.
+
+Both =opsim= and =MAF= are python applications, and jupyter notebooks provide a useful tool for exploratory applications of each, particularly MAF: making the =rubin_sim= module (which includes both =opsim= and =MAF=) available as part of the Nublado jupyterlab environment seems like a natural way of providing access to these tools. For some use cases, such as creating carefully crafted plots for reports that are primarily written by humans, nublado might function as a good user interface. However, a notebook interface is less suitable for more compute intensive jobs such as running full =opsim= simulations or computing batches of =MAF= metrics. Routine reports and plotting also may not be a good fit for a notebook interface, although the =nbreport= infrastructure may be worth exploring.
+
+There are several avenues for development of the infrastructure required for this workflow:
+ - Create a component to generate a visit database by collecting data from the EFD and DM.
+ - Generation of suites of weather conditions.
+ - Development of new MAF metrics plots for monitoring (everything in [[*Metrics, plots, and other diagnostics]] not already part of MAF).
+ - Develpoment of =opsim= to support starting from an existing visit database.
+ - Prototype a simple driver for the report creation workflow, to verify that something as complicated as the DM task management system is unnecessary.
+ - Make =rubin_sim= available within =nublado=.
+ - Experiment with combining MAF with =nbreport=.
+ 
 
 * Available infrastructure notes                                   :noexport:
 ** TODO opsim
