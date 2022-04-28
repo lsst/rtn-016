@@ -1,0 +1,56 @@
+@startuml
+skinparam monochrome true
+
+digraph reportdfd {
+    rankdir=TB;
+    node [shape=box];
+    
+    visits[label="completed visits"]
+    sims[label="new hybrid sim visits"]
+    conditions[label="simulated future conditions"]
+    new_metrics[label="new hybrid sim metrics"]
+    
+    A[shape=ellipse]
+    EDF -> A
+    DM -> A
+    A -> visits
+    
+    B[shape=ellipse]
+    visits -> B
+    conditions -> B
+    B -> sims
+    
+    C[shape=ellipse]
+    sims -> C
+    C -> new_metrics
+    
+    baseline[label="baseline visits"]
+    baseline_metrics[label="baseline metrics"]
+    C0[shape=ellipse]
+    baseline -> C0
+    C0 -> baseline_metrics
+    
+    prev_sims[label="old hybrib sim visits"]
+    prev_metrics[label="old hybrid sim metrics"]
+    C1[shape=ellipse]
+    prev_sims -> C1
+    C1 -> prev_metrics
+    
+    comparison_plots[label="comparison plots"]
+    
+    D[shape=ellipse]
+    baseline_metrics -> D
+    prev_metrics -> D
+    new_metrics -> D
+    D -> comparison_plots
+    
+    E[shape=ellipse]
+    baseline_metrics -> E
+    new_metrics -> E
+    comparison_plots -> E
+    text -> E
+    E -> report
+    
+}
+
+@enduml
