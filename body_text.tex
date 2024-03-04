@@ -14,7 +14,7 @@ Several Rubin Observatory planning documents recognize this need, and include re
 \item \href{https://ls.st/lse-29}{LSE-29}, the "LSST System Requirements Document," requires that the project "provide periodic status reports on the progress of the survey to allow both operations staff and the community to assess the survey progress" (LSR-REQ-0065), "create the necessary survey performance evaluation tools to predict the final results of the ten year survey based on the actual survey completed to date, assess the impacts of survey strategy changes resulting from changes in scientific priorities, and support the planning of the survey on a variety of time scales, from nightly through the entire 10 year duration" (LSR-REQ-0066), and "monitor the scientific and technical progress of the survey, communicate with the scientific user community and establish survey priorities, and adjust the survey design as needed to accomplish its goals given these priorities and achieved performance" (LSR-REQ-0070). %Furthermore, LSE-29 describes the need for an observing scientist to have tools for oversight of the entire data collection process, to be able to be directly involved in observing the role of an Observing Scientist who will need tools for oversight of the data collection process, including intervention in the normally autonomous operations process (LSR-REQ-0071). -- this is no longer the "Observing Scientist" but I don't know who it is (V&V? head of RPF?)
 \item \href{https://ls.st/lse-30}{LSE-30}, the "Observatory Systems Specifications," repeats the requirement that the project "provide the tools and administrative processes necessary to monitor the progress of the ongoing survey, provide reports on the progress of the survey, respond to feedback from the science community, and evaluate the impact of changing science priorities over the 10 year survey lifetime" (OSS-REQ-0033), and create summaries (OSS-REQ-131, OSS-REQ-0406), and publish visits ahead of observing them (OSS-REQ-0378). In addition, LSE-30 has several other requirements for monitoring that are of interest for scheduling and progress purposes (OSS-REQ-0056, 0067, 0068, 0072, 0078, 0079, 0314).
 \item \href{https://ls.st/lse-369}{LSE-369}, the "LSST Scheduler Requirements" document, specifies several reporting requirements for the scheduler, including requiring that the scheduler "monitor the survey and produce daily summary reports, computing metrics for each science program" with automatically generated tables and plots (SCD-REQ-016); that the scheduler "publish the predicted schedule of visits right after the posting of the next target to the queue" (SCD-REQ-058); and that it "provide a set of indicators for reporting the progress on each science proposal and the overall survey, in the technical quantities that are part of the goals in its algorithms" (SCD-REQ-0059). 
-\item \href{https://ls.st/rdo-016}{RDO-016}, the Rubin Observatory Operations Plan (rel. 1.0) states that the System Performance department will "Ensure that the observing strategy being implemented by the scheduler software is on track to achieve its science requirements at the end of 10 years. Achieving this goal will involve simulating the remaining survey time; folding in an evolving understanding of the Observatory system and ascertaining whether a change to the Scheduling algorithm or configuration may be warranted. In addition to meeting basic survey requirements, it may be possible to maximize the breadth of science that can be done with LSST by making minor changes to the observing strategy. The (internal) Survey Evaluation Working Group will include representation from Observatory Operations and Data Production, and will evaluate quarterly the current and expected performance of the survey and scheduler (as analyzed by the Survey Scheduling Team) and make recommendations to the Director on any needed tactical changes to the survey cadence (e.g., due to impact of weather, telescope or data processing responses to the schedule, etc)."
+\item \href{https://ls.st/rdo-018}{RDO-018}, the Rubin Observatory Operations Plan (rel. 1.1) states that the System Performance department will "Ensure that the observing strategy being implemented by the scheduler software is on track to achieve its science requirements at the end of 10 years. Achieving this goal will involve simulating the remaining survey time; folding in an evolving understanding of the Observatory system and ascertaining whether a change to the Scheduling algorithm or configuration may be warranted. In addition to meeting basic survey requirements, it may be possible to maximize the breadth of science that can be done with LSST by making minor changes to the observing strategy. The (internal) Survey Evaluation Working Group will include representation from Observatory Operations and Data Production, and will evaluate quarterly the current and expected performance of the survey and scheduler (as analyzed by the Survey Scheduling Team) and make recommendations to the Director on any needed tactical changes to the survey cadence (e.g., due to impact of weather, telescope or data processing responses to the schedule, etc)."
 \end{itemize}
 
 Although they emphasize the need for progress monitoring for strategy optimization and describe some reports in which such information is to be reported, they do not specify the specific data, metrics, or plots to be used for such monitoring or included in these reports.
@@ -386,12 +386,16 @@ Discussion: The next visit and advanced schedule do not need to be published usi
 \end{quote}
 another is \href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0378, "Advanced Publishing of Scheduler Sequence":
 \begin{quote}
-The scheduling of the observing sequence lasting at least \texttt{schedSeqDuration} shall be published in advance of each observing visit.
+Specification: The nominal survey schedule shall be published at least schedSeqAdvance
+followed by an updated schedule at least schedSeqDuration in advance of each observing
+visit.
 \end{quote}
+
+Together, these requirements mean publishing the expected next visit, the expected sequence of visits over the next two hours (seqSchedDuration) and a list of potential visits for the next 24 hours (schedSeqAdvance). Obviously these vary in reliability - the next visit is likely to be extremely reliable, while the visits for the next twenty-four hours will be subject to changes due to weather or the observatory status, and (as previous visits affect scheduler choices) the actual visits acquired could diverge from these forecasts.
 
 These requirements imply the infrastructure necessary for:
 \begin{itemize}
-\item Automatic creation of scheduler simulations. The initial simulation for the night may be the same one as that described in section \ref{sec:org4f67084}, but additional simulations throughout the night will also be required.
+\item Automatic creation of scheduler simulations. The initial simulation for the night may be the same one as that described in section \ref{sec:org4f67084}, but additional simulations throughout the night may also be required.
 \item A service to publish the predicted schedule through a web API.
 \item A service to publish the predicted schedule on a web page suitable for human inspection.
 \end{itemize}
@@ -451,28 +455,13 @@ The set of tools available to the Survey Scientist, Survey Support Scientist, an
 \item A tool for collection and presentation of calculated diagnostics.
 \end{itemize}
 
-\subsection{Periodic progress reports and performance reviews}
+\subsection{Periodic progress reports and survey performance reviews}
 \label{sec:orgc147ca5}
-The observatory staff and scheduling team will need to report progress and strategic concerns to management, funding agencies, and the community as a whole. Requirements for the existence of such reports are present in multiple plans and requirements documents. Some examples include \href{https://ls.st/lse-29}{LSE-29}/LSR-REQ-0065, "Survey performance reviews," which states:
-\begin{quote}
-The Observatory shall have the ability to provide periodic status reports on the progress of the survey to allow both operations staff and the community to assess the survey progress.
-\end{quote}
-and \href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0033, "Survey Planning and performance monitoring", calls out the need for reporting to the community at large:
-\begin{quote}
-The LSST shall provide the tools and administrative processes necessary to monitor the progress of the ongoing survey, provide reports on the progress of the survey, respond to feedback from the science community, and evaluate the impact of changing science priorities over the 10 year survey lifetime.
+The observatory staff and survey scheduling team will need to report progress and strategic concerns to management, funding agencies, and the community as a whole. Requirements for the existence of such reports are present in multiple plans and requirements documents, including  \href{https://ls.st/lse-29}{LSE-29}/LSR-REQ-0065, "Survey performance reviews," 
+and \href{https://ls.st/lse-30}{LSE-30}/OSS-REQ-0033, "Survey Planning and performance monitoring".  Multiple reports will be made on different schedules, customized for different audiences.
 
-Discussion: It is expected that the performance of this task will require the use of detailed survey simulations to evaluate scheduling alternatives and optimize the future performance of the survey.
-\end{quote}
-
-RDO-018, the \href{https://docushare.lsst.org/docushare/dsweb/Get/RDO-018}{PLAN for the OPERATIONS of the VERA C. RUBIN OBSERVATORY} gives responsibility for producing a quarterly report to the Observatory Support Scientist:
-\begin{quote}
-Responsible for producing a quarterly report on the scheduled/expected observations versus the performed observations.
-This analysis includes monitoring the assumptions used by the scheduler including slew times, shutter open/close times, readout times etc. 
-\end{quote}
-
-Multiple reports will be made on different schedules, customized for different audiences.
 All of these reports may draw from any of the report elements described in section \ref{sec:org3b975f0}, but it is unlikely that any single report will require every element.
-While the generation of individual elements will benefit from automation, the compilation and construction of such reports will require human attention and customization to each audience.
+While the generation of individual elements will benefit from automation, the compilation and construction of such reports will require human attention and customization to each audience. 
 
 \subsection{Interfaces for education and public outreach}
 \label{sec:orgcc8dd0a}
