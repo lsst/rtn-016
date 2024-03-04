@@ -411,8 +411,8 @@ Support for this use case imposes several additional requirements not present fo
 \subsection{Nightly scheduler activity reports}
 \label{sec:org958806d}
 Night reports (or nights summaries) are an important feature common to most astronomical facilities, and basic plots and metrics indicating survey progress are important elements for such reports in large surveys such as LSST.
-Several Rubin Observatory requirements require specify different aspects of the content and creation of night reports, including LSE-30/OSS-REQ-0131, LSE-30/OSS-REQ-0406, LSE-61/DMS-REQ-0096, and LSE-61/DMS-REQ-0097. Section 1.4 of LST-490, the "Observatory Electronics Logging Working Group Report," acknowledges the need for infrastructure to support the creation of this report.
-The specifications require that the report summarize "per system performance and behavior," but do not specify what is to be reported in great detail.
+Several Rubin Observatory requirements require specify different aspects of the content and creation of night reports, including LSE-30/OSS-REQ-0131, LSE-30/OSS-REQ-0406, LSE-61/DMS-REQ-0096, and LSE-61/DMS-REQ-0097.
+The specifications require that the report (or more likely, several reports covering different subsets of data, for different use-cases) summarize "per system performance and behavior," but do not specify what is to be reported in great detail.
 This report is a natural home for the nightly scheduler behavior diagnostics (such as those described in section \ref{sec:org848dea4}), when applied to actual (as opposed to simulated) scheduled nights.
 Furthermore, some elements of the survey state description (section \ref{sec:orgda9e383}) will be of broad enough interest that updates to them may be usefully included after each night.
 
@@ -427,7 +427,7 @@ So, to support scheduler and survey progress monitoring, the night report should
 
 \subsection{Tools for performance evaluation and analysis}
 \label{sec:orgae0addb}
-The Observatory Scientist, Observatory Support Scientists, and the Survey Scheduling team will need to routinely monitor survey progress and assumptions at a more detailed level than supported by the night reports alone:
+The Survey Scheduling team will need to routinely monitor survey progress and assumptions at a more detailed level than supported by the night reports alone:
 detailed monitoring will require all diagnostics listed in section \ref{sec:org3b975f0}.
 Furthermore, additional diagnostics will be required to debug specific problems, understand anomalies, and evaluate changing conditions or survey priorities.
 
@@ -446,7 +446,7 @@ Once code for creation of a diagnostic is developed, the processes and tools use
 When the creation is not computationally expensive, including it in a set of diagnostics to be automatically regenerated and posted nightly should be straightforward.
 For computationally expensive diagnostics, inclusion in a set of diagnostics that can be repeated "on demand" should be similarly straightforward.
 
-The set of tools available to the Survey Scientist, Survey Support Scientist, and the Survey Scheduling team should therefore include:
+The set of tools available to tthe Survey Scheduling team should therefore include:
 \begin{itemize}
 \item APIs that provide access to observatory telemetry, archives of survey simulations, and DM output from within a common environment. These tools will therefore require access to either the summit Engineering and Facilities Database (EFD, \href{https://ls.st/sql-034}{SQR-034}) or the data management EFD (DM-EFD, \href{https://ls.st/sqr-029}{SQR-029}) for the telemetry data, and the DM butler for access to DM output. Access to an archive of past \texttt{opsim} simulations and the metrics calculated from them will also be required.
 \item A computational environment that includes the analysis and tools needed for computing diagnostics (e.g. jupyter notebooks with environments that include \texttt{rubin\_scheduler}, \texttt{rubin\_sim}, \texttt{schedview}, and standard python scientific libraries)
